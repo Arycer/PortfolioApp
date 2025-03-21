@@ -1,28 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Project } from '../../components/ProjectCard/ProjectCard';
 import { Skill } from '../../components/SkillGrid/SkillGrid';
+import { Study } from '../../components/StudyCard/StudyCard';
+import { Job } from '../../components/JobCard/JobCard';
+import { AboutMeData } from '../../components/AboutMe/AboutMe';
 import ProjectForm from '../../components/ProjectForm/ProjectForm';
 import SkillForm from '../../components/SkillForm/SkillForm';
+import StudyForm from '../../components/StudyForm/StudyForm';
+import JobForm from '../../components/JobForm/JobForm';
+import AboutMeForm from '../../components/AboutMeForm/AboutMeForm';
+import StudyCard from '../../components/StudyCard/StudyCard';
+import JobCard from '../../components/JobCard/JobCard';
+import AboutMe from '../../components/AboutMe/AboutMe';
 import Modal from '../../components/Modal/Modal';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [skills, setSkills] = useState<Skill[]>([]);
+    const [studies, setStudies] = useState<Study[]>([]);
+    const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
     const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
+    const [editingStudy, setEditingStudy] = useState<Study | null>(null);
+    const [editingJob, setEditingJob] = useState<Job | null>(null);
     const [showProjectForm, setShowProjectForm] = useState(false);
     const [showSkillForm, setShowSkillForm] = useState(false);
+    const [showStudyForm, setShowStudyForm] = useState(false);
+    const [showJobForm, setShowJobForm] = useState(false);
+    const [showAboutMeForm, setShowAboutMeForm] = useState(false);
+    const { user } = useAuth();
+    const [aboutMe, setAboutMe] = useState<AboutMeData | null>(null);
 
     const fetchData = async () => {
         try {
-            const [projectsSnapshot, skillsSnapshot] = await Promise.all([
+            const [
+                projectsSnapshot, 
+                skillsSnapshot, 
+                studiesSnapshot, 
+                jobsSnapshot,
+                aboutMeSnapshot
+            ] = await Promise.all([
                 getDocs(collection(db, 'projects')),
-                getDocs(collection(db, 'skills'))
+                getDocs(collection(db, 'skills')),
+                getDocs(collection(db, 'studies')),
+                getDocs(collection(db, 'jobs')),
+                getDocs(collection(db, 'aboutMe'))
             ]);
 
             const projectsList = projectsSnapshot.docs.map(doc => ({
@@ -35,8 +63,30 @@ const AdminPage: React.FC = () => {
                 ...doc.data()
             })) as Skill[];
 
+            const studiesList = studiesSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Study[];
+
+            const jobsList = jobsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Job[];
+
             setProjects(projectsList);
             setSkills(skillsList);
+            setStudies(studiesList);
+            setJobs(jobsList);
+
+            // Tomamos el primer documento de aboutMe (solo debería haber uno)
+            const aboutMeData = aboutMeSnapshot.docs[0];
+            if (aboutMeData) {
+                setAboutMe({
+                    id: aboutMeData.id,
+                    ...aboutMeData.data()
+                } as AboutMeData);
+            }
+
             setError(null);
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -49,6 +99,140 @@ const AdminPage: React.FC = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const initializeAboutMe = async () => {
+        try {
+            const initialData = {
+                greeting: "¡Hola! Soy Arycer",
+                description: "Desarrollador Full Stack apasionado por crear soluciones innovadoras y experiencias digitales excepcionales. Con experiencia en desarrollo web moderno y un enfoque en la calidad del código y la experiencia del usuario.",
+                socialLinks: [
+                    {
+                        name: "GitHub",
+                        url: "https://github.com/arycer",
+                        icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original.svg"
+                    },
+                    {
+                        name: "LinkedIn",
+                        url: "https://linkedin.com/in/arycer",
+                        icon: "https://raw.githubusercontent.com/devicons/devicon/master/icons/linkedin/linkedin-original.svg"
+                    }
+                ]
+            };
+
+            // Primero creamos la colección si no existe
+            const aboutMeCollection = collection(db, 'aboutMe');
+            
+            // Luego creamos el documento con ID específico
+            const aboutMeRef = doc(aboutMeCollection, 'main');
+            await setDoc(aboutMeRef, initialData);
+            
+            await fetchData();
+            setError(null);
+        } catch (err) {
+            console.error('Error initializing about me:', err);
+            setError('Error al inicializar la información.');
+        }
+    };
+
+    // Job handlers
+    const handleCreateJob = async (jobData: Omit<Job, 'id'>) => {
+        setIsSubmitting(true);
+        try {
+            await addDoc(collection(db, 'jobs'), jobData);
+            await fetchData();
+            setShowJobForm(false);
+            setError(null);
+        } catch (err) {
+            console.error('Error creating job:', err);
+            setError('Error al crear el trabajo.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleUpdateJob = async (jobData: Omit<Job, 'id'>) => {
+        if (!editingJob?.id) return;
+        
+        setIsSubmitting(true);
+        try {
+            const jobRef = doc(db, 'jobs', editingJob.id);
+            await updateDoc(jobRef, jobData);
+            await fetchData();
+            setEditingJob(null);
+            setShowJobForm(false);
+            setError(null);
+        } catch (err) {
+            console.error('Error updating job:', err);
+            setError('Error al actualizar el trabajo.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteJob = async (jobId: string) => {
+        if (!window.confirm('¿Estás seguro de que quieres eliminar este trabajo?')) {
+            return;
+        }
+
+        try {
+            await deleteDoc(doc(db, 'jobs', jobId));
+            await fetchData();
+            setError(null);
+        } catch (err) {
+            console.error('Error deleting job:', err);
+            setError('Error al eliminar el trabajo.');
+        }
+    };
+
+    // Study handlers
+    const handleCreateStudy = async (studyData: Omit<Study, 'id'>) => {
+        setIsSubmitting(true);
+        try {
+            await addDoc(collection(db, 'studies'), studyData);
+            await fetchData();
+            setShowStudyForm(false);
+            setError(null);
+        } catch (err) {
+            console.error('Error creating study:', err);
+            setError('Error al crear el estudio.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleUpdateStudy = async (studyData: Omit<Study, 'id'>) => {
+        if (!editingStudy?.id) return;
+        
+        setIsSubmitting(true);
+        try {
+            const studyRef = doc(db, 'studies', editingStudy.id);
+            await updateDoc(studyRef, studyData);
+            await fetchData();
+            setEditingStudy(null);
+            setShowStudyForm(false);
+            setError(null);
+        } catch (err) {
+            console.error('Error updating study:', err);
+            setError('Error al actualizar el estudio.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteStudy = async (studyId: string) => {
+        if (!window.confirm('¿Estás seguro de que quieres eliminar este estudio?')) {
+            return;
+        }
+
+        try {
+            await deleteDoc(doc(db, 'studies', studyId));
+            await fetchData();
+            setError(null);
+        } catch (err) {
+            console.error('Error deleting study:', err);
+            setError('Error al eliminar el estudio.');
+        }
+    };
 
     // Project handlers
     const handleCreateProject = async (projectData: Omit<Project, 'id'>) => {
@@ -150,6 +334,30 @@ const AdminPage: React.FC = () => {
         }
     };
 
+    // About Me handlers
+    const handleUpdateAboutMe = async (aboutMeData: Omit<AboutMeData, 'id'>) => {
+        setIsSubmitting(true);
+        try {
+            if (aboutMe?.id) {
+                // Actualizar documento existente
+                const aboutMeRef = doc(db, 'aboutMe', aboutMe.id);
+                await updateDoc(aboutMeRef, aboutMeData);
+            } else {
+                // Crear nuevo documento con ID específico
+                const aboutMeRef = doc(db, 'aboutMe', 'main');
+                await setDoc(aboutMeRef, aboutMeData);
+            }
+            await fetchData();
+            setShowAboutMeForm(false);
+            setError(null);
+        } catch (err) {
+            console.error('Error updating about me:', err);
+            setError('Error al actualizar la información.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -164,6 +372,122 @@ const AdminPage: React.FC = () => {
     return (
         <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                {/* Sección About Me */}
+                <section>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                            Sobre Mí
+                        </h2>
+                        {aboutMe ? (
+                            <button
+                                onClick={() => setShowAboutMeForm(true)}
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                            >
+                                Editar Información
+                            </button>
+                        ) : (
+                            <button
+                                onClick={initializeAboutMe}
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                            >
+                                Inicializar Información
+                            </button>
+                        )}
+                    </div>
+
+                    {aboutMe && (
+                        <div className="relative">
+                            <AboutMe data={aboutMe} />
+                        </div>
+                    )}
+                </section>
+
+                {/* Sección de Experiencia Laboral */}
+                <section>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                            Administrar Experiencia
+                        </h2>
+                        <button
+                            onClick={() => setShowJobForm(true)}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                        >
+                            Nuevo Trabajo
+                        </button>
+                    </div>
+
+                    <div className="space-y-8">
+                        {jobs.map(job => (
+                            <div
+                                key={job.id}
+                                className="relative"
+                            >
+                                <JobCard job={job} />
+                                <div className="absolute top-4 right-4 flex space-x-3">
+                                    <button
+                                        onClick={() => {
+                                            setEditingJob(job);
+                                            setShowJobForm(true);
+                                        }}
+                                        className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => job.id && handleDeleteJob(job.id)}
+                                        className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Sección de Estudios */}
+                <section>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                            Administrar Formación
+                        </h2>
+                        <button
+                            onClick={() => setShowStudyForm(true)}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                        >
+                            Nuevo Estudio
+                        </button>
+                    </div>
+
+                    <div className="space-y-6">
+                        {studies.map(study => (
+                            <div
+                                key={study.id}
+                                className="relative bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden"
+                            >
+                                <StudyCard study={study} />
+                                <div className="absolute top-4 right-4 flex space-x-3">
+                                    <button
+                                        onClick={() => {
+                                            setEditingStudy(study);
+                                            setShowStudyForm(true);
+                                        }}
+                                        className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => study.id && handleDeleteStudy(study.id)}
+                                        className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
                 {/* Sección de Habilidades */}
                 <section>
                     <div className="flex justify-between items-center mb-8">
@@ -316,6 +640,60 @@ const AdminPage: React.FC = () => {
                         setShowSkillForm(false);
                         setEditingSkill(null);
                     }}
+                    isSubmitting={isSubmitting}
+                />
+            </Modal>
+
+            {/* Modal de Estudio */}
+            <Modal
+                isOpen={showStudyForm}
+                onClose={() => {
+                    setShowStudyForm(false);
+                    setEditingStudy(null);
+                }}
+                title={editingStudy ? 'Editar Estudio' : 'Nuevo Estudio'}
+            >
+                <StudyForm
+                    study={editingStudy || undefined}
+                    onSubmit={editingStudy ? handleUpdateStudy : handleCreateStudy}
+                    onCancel={() => {
+                        setShowStudyForm(false);
+                        setEditingStudy(null);
+                    }}
+                    isSubmitting={isSubmitting}
+                />
+            </Modal>
+
+            {/* Modal de Trabajo */}
+            <Modal
+                isOpen={showJobForm}
+                onClose={() => {
+                    setShowJobForm(false);
+                    setEditingJob(null);
+                }}
+                title={editingJob ? 'Editar Trabajo' : 'Nuevo Trabajo'}
+            >
+                <JobForm
+                    job={editingJob || undefined}
+                    onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
+                    onCancel={() => {
+                        setShowJobForm(false);
+                        setEditingJob(null);
+                    }}
+                    isSubmitting={isSubmitting}
+                />
+            </Modal>
+
+            {/* Modal de About Me */}
+            <Modal
+                isOpen={showAboutMeForm}
+                onClose={() => setShowAboutMeForm(false)}
+                title="Editar Información Personal"
+            >
+                <AboutMeForm
+                    data={aboutMe || undefined}
+                    onSubmit={handleUpdateAboutMe}
+                    onCancel={() => setShowAboutMeForm(false)}
                     isSubmitting={isSubmitting}
                 />
             </Modal>

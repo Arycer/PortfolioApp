@@ -5,10 +5,20 @@ import ProjectGrid from '../../components/ProjectGrid/ProjectGrid';
 import ProjectDetail from '../../components/ProjectDetail/ProjectDetail';
 import SkillGrid, { Skill } from '../../components/SkillGrid/SkillGrid';
 import { Project } from '../../components/ProjectCard/ProjectCard';
+import { Study } from '../../components/StudyCard/StudyCard';
+import { Job } from '../../components/JobCard/JobCard';
+import { AboutMeData } from '../../components/AboutMe/AboutMe';
+import StudyCard from '../../components/StudyCard/StudyCard';
+import JobCard from '../../components/JobCard/JobCard';
+import AboutMe from '../../components/AboutMe/AboutMe';
+import ContactSection from '../../components/ContactSection/ContactSection';
 
 const PortfolioPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [skills, setSkills] = useState<Skill[]>([]);
+    const [studies, setStudies] = useState<Study[]>([]);
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [aboutMe, setAboutMe] = useState<AboutMeData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -16,24 +26,53 @@ const PortfolioPage: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch projects
-                const projectsCollection = collection(db, 'projects');
-                const projectsSnapshot = await getDocs(projectsCollection);
+                const [
+                    projectsSnapshot, 
+                    skillsSnapshot, 
+                    studiesSnapshot, 
+                    jobsSnapshot,
+                    aboutMeSnapshot
+                ] = await Promise.all([
+                    getDocs(collection(db, 'projects')),
+                    getDocs(collection(db, 'skills')),
+                    getDocs(collection(db, 'studies')),
+                    getDocs(collection(db, 'jobs')),
+                    getDocs(collection(db, 'aboutMe'))
+                ]);
+
                 const projectsList = projectsSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 })) as Project[];
-                setProjects(projectsList);
 
-                // Fetch skills
-                const skillsCollection = collection(db, 'skills');
-                const skillsSnapshot = await getDocs(skillsCollection);
                 const skillsList = skillsSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 })) as Skill[];
-                setSkills(skillsList);
 
+                const studiesList = studiesSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Study[];
+
+                const jobsList = jobsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Job[];
+
+                // Tomamos el primer documento de aboutMe (solo debería haber uno)
+                const aboutMeData = aboutMeSnapshot.docs[0];
+                if (aboutMeData) {
+                    setAboutMe({
+                        id: aboutMeData.id,
+                        ...aboutMeData.data()
+                    } as AboutMeData);
+                }
+
+                setProjects(projectsList);
+                setSkills(skillsList);
+                setStudies(studiesList);
+                setJobs(jobsList);
                 setError(null);
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -67,6 +106,9 @@ const PortfolioPage: React.FC = () => {
 
     return (
         <div className="space-y-24">
+            {/* Sección About Me */}
+            {aboutMe && <AboutMe data={aboutMe} />}
+
             {/* Sección de Skills */}
             <section>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,6 +122,46 @@ const PortfolioPage: React.FC = () => {
                     </div>
 
                     <SkillGrid skills={skills} />
+                </div>
+            </section>
+
+            {/* Sección de Estudios */}
+            <section>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
+                            Mi Formación
+                        </h2>
+                        <p className="text-slate-400 max-w-2xl mx-auto">
+                            Mi trayectoria académica y formación profesional.
+                        </p>
+                    </div>
+
+                    <div className="space-y-6">
+                        {studies.map(study => (
+                            <StudyCard key={study.id} study={study} />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Sección de Experiencia Laboral */}
+            <section>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
+                            Mi Experiencia
+                        </h2>
+                        <p className="text-slate-400 max-w-2xl mx-auto">
+                            Mi trayectoria profesional y experiencia laboral.
+                        </p>
+                    </div>
+
+                    <div className="space-y-8">
+                        {jobs.map(job => (
+                            <JobCard key={job.id} job={job} />
+                        ))}
+                    </div>
                 </div>
             </section>
 
@@ -105,10 +187,8 @@ const PortfolioPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Aquí irán las futuras secciones */}
-            {/* <section className="skills">...</section> */}
-            {/* <section className="education">...</section> */}
-            {/* <section className="experience">...</section> */}
+            {/* Sección de Contacto */}
+            {aboutMe && <ContactSection socialLinks={aboutMe.socialLinks} />}
 
             {selectedProject && (
                 <ProjectDetail
