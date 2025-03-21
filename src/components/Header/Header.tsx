@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from '../../context/AuthContext';
-import logoImg from '../../assets/arycer.png';
 
 // Definición de styled components usando .attrs para inyectar las clases de Tailwind
 const HeaderContainer = styled.header.attrs({
@@ -79,7 +78,11 @@ const Header: React.FC = () => {
             <TitleLink to="/">Arycer</TitleLink>
             {user && (
                 <ProfileContainer>
-                    <ProfileImage src={logoImg} alt="Logo Arycer" onClick={handleProfileClick} />
+                    <ProfileImage 
+                        src="/arycer.png" 
+                        alt="Logo Arycer" 
+                        onClick={handleProfileClick} 
+                    />
                     {showMenu && (
                         <DropdownMenu ref={menuRef}>
                             <DropdownItem onClick={handleGoToAdmin}>Panel Admin</DropdownItem>
