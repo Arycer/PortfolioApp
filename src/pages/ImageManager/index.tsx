@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getImages, deleteImage, ImageInfo } from '../../services/storageService';
 import ImageUploader from '../../components/ImageUploader/ImageUploader';
 import ImagePreview from '../../components/ImagePreview/ImagePreview';
 
 const ImageManager: React.FC = () => {
-  const navigate = useNavigate();
   const [images, setImages] = useState<ImageInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +42,7 @@ const ImageManager: React.FC = () => {
     loadImages();
   }, [loadImages]);
 
-  const handleUploadSuccess = (imageUrl: string) => {
+  const handleUploadSuccess = () => {
     setUploadSuccess(true);
     loadImages(); // Recargar las imágenes después de una carga exitosa
     

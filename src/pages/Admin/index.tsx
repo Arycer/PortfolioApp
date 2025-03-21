@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Project } from '../../components/ProjectCard/ProjectCard';
@@ -21,7 +20,6 @@ import ProjectPreview from '../../components/SortableList/ProjectPreview';
 import SkillPreview from '../../components/SortableList/SkillPreview';
 
 const AdminPage: React.FC = () => {
-    const navigate = useNavigate();
     const [projects, setProjects] = useState<Project[]>([]);
     const [skills, setSkills] = useState<Skill[]>([]);
     const [studies, setStudies] = useState<Study[]>([]);
