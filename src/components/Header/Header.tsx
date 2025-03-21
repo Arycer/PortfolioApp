@@ -3,6 +3,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import {useAuth} from '../../context/AuthContext';
+import {useProfile} from '../../context/ProfileContext';
 
 // Definición de styled components usando .attrs para inyectar las clases de Tailwind
 const HeaderContainer = styled.header.attrs({
@@ -31,6 +32,7 @@ const DropdownItem = styled.button.attrs({
 
 const Header: React.FC = () => {
     const {user, signOut} = useAuth();
+    const {profileData} = useProfile();
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const menuRef = useRef<HTMLDivElement>(null);
@@ -73,15 +75,27 @@ const Header: React.FC = () => {
         setShowMenu(false);
     };
 
+    const handleGoToImageManager = () => {
+        navigate('/admin/images');
+        setShowMenu(false);
+    };
+
     return (
         <HeaderContainer>
-            <TitleLink to="/">Arycer</TitleLink>
+            <TitleLink to="/">
+                {profileData?.username || 'Arycer'}
+            </TitleLink>
             {user && (
                 <ProfileContainer>
-                    <ProfileImage src="/arycer.png" alt="Logo Arycer" onClick={handleProfileClick}/>
+                    <ProfileImage 
+                        src={profileData?.profileImage || "/arycer.png"} 
+                        alt={`${profileData?.username || 'Usuario'} Logo`} 
+                        onClick={handleProfileClick}
+                    />
                     {showMenu && (
                         <DropdownMenu ref={menuRef}>
                             <DropdownItem onClick={handleGoToAdmin}>Panel Admin</DropdownItem>
+                            <DropdownItem onClick={handleGoToImageManager}>Gestor de Imágenes</DropdownItem>
                             <DropdownItem onClick={handleLogout}>Cerrar Sesión</DropdownItem>
                         </DropdownMenu>
                     )}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Project } from '../../components/ProjectCard/ProjectCard';
@@ -20,6 +21,7 @@ import ProjectPreview from '../../components/SortableList/ProjectPreview';
 import SkillPreview from '../../components/SortableList/SkillPreview';
 
 const AdminPage: React.FC = () => {
+    const navigate = useNavigate();
     const [projects, setProjects] = useState<Project[]>([]);
     const [skills, setSkills] = useState<Skill[]>([]);
     const [studies, setStudies] = useState<Study[]>([]);
@@ -440,6 +442,13 @@ const AdminPage: React.FC = () => {
     return (
         <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                {/* Header con acciones principales */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4">
+                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+                        Panel Admin
+                    </h1>
+                </div>
+
                 {/* Sección About Me */}
                 <section>
                     <div className="flex justify-between items-center mb-8">

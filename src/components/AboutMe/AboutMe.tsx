@@ -10,10 +10,12 @@ export interface SocialLink {
 
 export interface AboutMeData {
     id?: string;
+    username: string; // Nombre que aparecerá en el Header
     greeting: string;
     description: string;
     socialLinks: SocialLink[];
     contactEmail?: string;
+    profileImage?: string; // URL de la imagen de perfil
 }
 
 interface AboutMeProps {
@@ -41,8 +43,8 @@ const AboutMe: React.FC<AboutMeProps> = ({data}) => {
                         <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 rounded-full blur-2xl"></div>
                         <img
-                            src="/arycer.png"
-                            alt="Arycer Logo"
+                            src={data.profileImage || "/arycer.png"}
+                            alt={`${data.greeting.split('!')[0]} Logo`}
                             className="relative w-full h-full object-contain"
                         />
                     </div>
