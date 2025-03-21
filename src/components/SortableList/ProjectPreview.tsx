@@ -49,7 +49,7 @@ const ProjectPreview: React.FC<ProjectPreviewProps> = ({project, onEdit, onDelet
                 <img
                     src={project.image}
                     alt={project.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain bg-slate-900/50"
                 />
             </div>
 

@@ -94,7 +94,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         <img 
           src={image.url} 
           alt={image.name} 
-          className="w-full h-48 object-cover object-center transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-48 object-contain bg-slate-900/50 object-center transition-transform duration-300 group-hover:scale-105"
         />
         {copied && (
           <div className="absolute top-2 right-2 bg-green-600/90 text-white text-xs px-3 py-1 rounded-full z-20">

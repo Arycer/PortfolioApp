@@ -27,11 +27,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({project, onClick}) => {
                 onClick={onClick}
                 className="group cursor-pointer"
             >
-                <div className="aspect-video">
+                <div className="aspect-video bg-slate-900/50">
                     <img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                     />
                 </div>
                 <div className="p-4 space-y-3">

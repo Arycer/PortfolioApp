@@ -14,7 +14,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   onUploadError,
   folder = 'images',
   acceptedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-  maxSizeMB = 5
+  maxSizeMB = 10
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -163,7 +163,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <img
                   src={preview}
                   alt="Vista previa"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-slate-900/50"
                 />
               </div>
             )}
@@ -182,7 +182,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <img
                   src={preview}
                   alt="Vista previa"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-slate-900/50"
                 />
               </div>
             ) : (

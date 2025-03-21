@@ -227,7 +227,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                     <img 
                                         src={formData.profileImage} 
                                         alt="Imagen de perfil" 
-                                        className="w-40 h-40 object-cover rounded-lg border-2 border-indigo-500/30 mx-auto"
+                                        className="w-40 h-40 object-contain bg-slate-900/50 rounded-lg border-2 border-indigo-500/30 mx-auto"
                                     />
                                     <button
                                         type="button"
@@ -285,7 +285,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                             <ImageUploader 
                                                 onUploadSuccess={handleProfileImageUpload}
                                                 folder="profile"
-                                                maxSizeMB={2}
+                                                maxSizeMB={10}
                                             />
                                         </div>
                                         
@@ -303,7 +303,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                                             <img 
                                                                 src={image.url} 
                                                                 alt={image.name} 
-                                                                className="w-full h-40 object-cover rounded-lg border border-slate-700 hover:border-indigo-500"
+                                                                className="w-full h-40 object-contain bg-slate-900/50 rounded-lg border border-slate-700 hover:border-indigo-500"
                                                             />
                                                         </div>
                                                     ))}

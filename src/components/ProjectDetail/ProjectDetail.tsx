@@ -16,11 +16,11 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({project, isOpen, onClose})
                 {/* Columna izquierda: Imagen y enlaces */}
                 <div className="space-y-4">
                     {/* Imagen */}
-                    <div className="rounded-lg overflow-hidden h-64 md:h-72">
+                    <div className="rounded-lg overflow-hidden h-64 md:h-72 bg-slate-900/50">
                         <img
                             src={project.image}
                             alt={project.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                         />
                     </div>
 

@@ -752,7 +752,7 @@ const AdminPage: React.FC = () => {
                                         <img
                                             src={project.image}
                                             alt={project.title}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-contain bg-slate-900/50"
                                         />
                                     </div>
                                     <div className="p-4">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getImages, deleteImage, ImageInfo } from '../../services/storageService';
+import { getImages, deleteImage, ImageInfo, uploadImageFromURL } from '../../services/storageService';
 import ImageUploader from '../../components/ImageUploader/ImageUploader';
 import ImagePreview from '../../components/ImagePreview/ImagePreview';
 
@@ -11,6 +11,10 @@ const ImageManager: React.FC = () => {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Estado para la subida de imágenes por URL
+  const [imageUrl, setImageUrl] = useState('');
+  const [isUploadingUrl, setIsUploadingUrl] = useState(false);
 
   const folders = [
     { id: 'images', name: 'General' },
@@ -49,6 +53,25 @@ const ImageManager: React.FC = () => {
     setTimeout(() => {
       setUploadSuccess(false);
     }, 3000);
+  };
+  
+  // Manejar la subida de imagen desde URL
+  const handleUploadFromUrl = async () => {
+    if (!imageUrl.trim()) return;
+    
+    setIsUploadingUrl(true);
+    setError(null);
+    
+    try {
+      await uploadImageFromURL(imageUrl, activeFolder);
+      setImageUrl('');
+      handleUploadSuccess();
+    } catch (err) {
+      console.error('Error al subir imagen desde URL:', err);
+      setError('No se pudo subir la imagen desde URL. Verifica que la URL sea válida y accesible.');
+    } finally {
+      setIsUploadingUrl(false);
+    }
   };
 
   const handleDeleteImage = async (image: ImageInfo) => {
@@ -189,18 +212,76 @@ const ImageManager: React.FC = () => {
         </div>
       )}
       
-      <div className="mb-8 bg-slate-800/20 border border-slate-700/40 rounded-lg p-6 shadow-lg">
-        <h2 className="text-xl font-medium text-white mb-4 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-          </svg>
-          Subir nueva imagen
-        </h2>
-        <ImageUploader
-          onUploadSuccess={handleUploadSuccess}
-          onUploadError={(err) => setError(err.message)}
-          folder={activeFolder}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Sección para subir imágenes desde el dispositivo */}
+        <div className="bg-slate-800/20 border border-slate-700/40 rounded-lg p-6 shadow-lg">
+          <h2 className="text-xl font-medium text-white mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Subir imagen desde dispositivo
+          </h2>
+          <ImageUploader
+            onUploadSuccess={handleUploadSuccess}
+            onUploadError={(err) => setError(err.message)}
+            folder={activeFolder}
+          />
+        </div>
+        
+        {/* Sección para subir imágenes desde URL */}
+        <div className="bg-slate-800/20 border border-slate-700/40 rounded-lg p-6 shadow-lg">
+          <h2 className="text-xl font-medium text-white mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 010-5.656l4-4a4 4 0 015.656 5.656l-1.1 1.1" />
+            </svg>
+            Subir imagen desde URL
+          </h2>
+          
+          <div className="p-4 bg-slate-800/30 rounded-lg border border-slate-700/50">
+            <p className="text-sm text-slate-400 mb-4">
+              Introduce la URL de una imagen disponible en internet para añadirla a tu colección. La imagen se copiará y almacenará en tu cuenta.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                type="url"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="https://ejemplo.com/imagen.jpg"
+                className="flex-1 px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                disabled={isUploadingUrl}
+              />
+              <button
+                onClick={handleUploadFromUrl}
+                disabled={!imageUrl.trim() || isUploadingUrl}
+                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center whitespace-nowrap"
+              >
+                {isUploadingUrl ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Subir Imagen
+                  </>
+                )}
+              </button>
+            </div>
+            
+            <div className="mt-3 text-xs text-slate-500">
+              <p>Formatos soportados: JPG, PNG, GIF, WEBP</p>
+              <p>Tamaño máximo: 10MB</p>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div className="mb-6 flex items-center justify-between">
