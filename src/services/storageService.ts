@@ -53,32 +53,46 @@ export const uploadImage = async (file: File, folder: string = 'images'): Promis
  */
 export const uploadImageFromURL = async (imageUrl: string, folder: string = 'images'): Promise<ImageInfo> => {
   try {
-    // Obtener el nombre de archivo de la URL
-    const urlParts = imageUrl.split('/');
-    let originalFileName = urlParts[urlParts.length - 1];
+    // Crear una URL para análisis más seguro
+    const parsedUrl = new URL(imageUrl);
     
-    // Limpiar parámetros de consulta en el nombre del archivo
+    // Obtener la ruta de la URL
+    const pathSegments = parsedUrl.pathname.split('/');
+    let originalFileName = pathSegments[pathSegments.length - 1];
+    
+    // Si no hay nombre de archivo en la ruta, usar un nombre temporal
+    if (!originalFileName || originalFileName === '' || originalFileName === '/') {
+      originalFileName = `image_${Date.now()}`;
+    }
+    
+    // Limpiar parámetros de consulta en el nombre del archivo (si los hay)
     if (originalFileName.includes('?')) {
       originalFileName = originalFileName.split('?')[0];
     }
     
-    // Si no se puede determinar el nombre o la extensión, usar uno genérico
+    // Extraer extensión del archivo o determinar basada en tipo de contenido
     let fileExtension = originalFileName.split('.').pop();
-    if (!fileExtension || fileExtension === originalFileName) {
+    
+    // Si no se puede determinar la extensión o no es válida
+    if (!fileExtension || fileExtension === originalFileName || fileExtension.length > 5) {
+      // Intentar determinar el tipo de extensión adecuada basada en el tipo de contenido
       fileExtension = 'jpg'; // Usar jpg como formato predeterminado
-      originalFileName = `image_${Date.now()}.${fileExtension}`;
+      originalFileName = `${originalFileName.replace(/\.[^/.]+$/, '')}_${Date.now()}.${fileExtension}`;
     }
     
-    // Descargar la imagen
+    // Descargar la imagen manteniendo la URL completa
     const response = await fetch(imageUrl);
     if (!response.ok) {
       throw new Error(`Error al descargar la imagen: ${response.statusText}`);
     }
     
+    // Obtener el tipo de contenido de la respuesta
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    
     const blob = await response.blob();
     
-    // Crear un File a partir del Blob
-    const file = new File([blob], originalFileName, { type: blob.type || 'image/jpeg' });
+    // Crear un File a partir del Blob con el tipo de contenido correcto
+    const file = new File([blob], originalFileName, { type: contentType });
     
     // Usar la función uploadImage para subir el archivo
     return await uploadImage(file, folder);
