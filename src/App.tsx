@@ -12,6 +12,7 @@ import { ProfileProvider } from './context/ProfileContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import StarBackground from './components/StarBackground/StarBackground.tsx';
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
             <ProfileProvider>
                 <BrowserRouter>
                     <Analytics />
+                    <SpeedInsights />
                     <StarBackground />
                     <div className="min-h-screen flex flex-col relative">
                         <Header />
