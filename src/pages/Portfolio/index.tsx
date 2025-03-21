@@ -254,7 +254,7 @@ const PortfolioPage: React.FC = () => {
                             Mis Proyectos
                         </h2>
                         <p className="text-slate-400 max-w-2xl mx-auto">
-                            Explora mi portafolio de proyectos, donde cada creación refleja mi pasión por el desarrollo y la innovación.
+                            Explora los proyectos en los que he trabajado.
                         </p>
                     </div>
 
