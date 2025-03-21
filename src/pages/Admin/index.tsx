@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Project } from '../../components/ProjectCard/ProjectCard';
 import { Skill } from '../../components/SkillGrid/SkillGrid';
@@ -15,6 +15,9 @@ import StudyCard from '../../components/StudyCard/StudyCard';
 import JobCard from '../../components/JobCard/JobCard';
 import AboutMe from '../../components/AboutMe/AboutMe';
 import Modal from '../../components/Modal/Modal';
+import SortableList from '../../components/SortableList/SortableList';
+import ProjectPreview from '../../components/SortableList/ProjectPreview';
+import SkillPreview from '../../components/SortableList/SkillPreview';
 
 const AdminPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -34,6 +37,11 @@ const AdminPage: React.FC = () => {
     const [showJobForm, setShowJobForm] = useState(false);
     const [showAboutMeForm, setShowAboutMeForm] = useState(false);
     const [aboutMe, setAboutMe] = useState<AboutMeData | null>(null);
+    
+    // Nuevos estados para controlar la vista de listas ordenables
+    const [projectsViewMode, setProjectsViewMode] = useState<'grid' | 'list'>('grid');
+    const [skillsViewMode, setSkillsViewMode] = useState<'grid' | 'list'>('grid');
+    const [isOrderUpdating, setIsOrderUpdating] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -53,13 +61,21 @@ const AdminPage: React.FC = () => {
 
             const projectsList = projectsSnapshot.docs.map(doc => ({
                 id: doc.id,
+                order: doc.data().order || 0, // Asegurarnos de tener una propiedad order
                 ...doc.data()
             })) as Project[];
             
+            // Ordenar proyectos por la propiedad order
+            projectsList.sort((a, b) => (a.order || 0) - (b.order || 0));
+            
             const skillsList = skillsSnapshot.docs.map(doc => ({
                 id: doc.id,
+                order: doc.data().order || 0, // Asegurarnos de tener una propiedad order
                 ...doc.data()
             })) as Skill[];
+            
+            // Ordenar habilidades por la propiedad order
+            skillsList.sort((a, b) => (a.order || 0) - (b.order || 0));
 
             const studiesList = studiesSnapshot.docs.map(doc => ({
                 id: doc.id,
@@ -356,6 +372,60 @@ const AdminPage: React.FC = () => {
         }
     };
 
+    // Función para actualizar el orden de los proyectos
+    const handleProjectsReorder = async (reorderedProjects: Project[]) => {
+        setProjects(reorderedProjects);
+        
+        try {
+            setIsOrderUpdating(true);
+            const batch = writeBatch(db);
+            
+            // Actualizar el orden de cada proyecto
+            reorderedProjects.forEach((project, index) => {
+                if (project.id) {
+                    const projectRef = doc(db, 'projects', project.id);
+                    batch.update(projectRef, { order: index });
+                }
+            });
+            
+            await batch.commit();
+            setError(null);
+        } catch (err) {
+            console.error('Error updating projects order:', err);
+            setError('Error al actualizar el orden de los proyectos.');
+            await fetchData(); // Recargar datos originales si hay error
+        } finally {
+            setIsOrderUpdating(false);
+        }
+    };
+    
+    // Función para actualizar el orden de las habilidades
+    const handleSkillsReorder = async (reorderedSkills: Skill[]) => {
+        setSkills(reorderedSkills);
+        
+        try {
+            setIsOrderUpdating(true);
+            const batch = writeBatch(db);
+            
+            // Actualizar el orden de cada habilidad
+            reorderedSkills.forEach((skill, index) => {
+                if (skill.id) {
+                    const skillRef = doc(db, 'skills', skill.id);
+                    batch.update(skillRef, { order: index });
+                }
+            });
+            
+            await batch.commit();
+            setError(null);
+        } catch (err) {
+            console.error('Error updating skills order:', err);
+            setError('Error al actualizar el orden de las habilidades.');
+            await fetchData(); // Recargar datos originales si hay error
+        } finally {
+            setIsOrderUpdating(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -492,56 +562,118 @@ const AdminPage: React.FC = () => {
                         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
                             Administrar Habilidades
                         </h2>
-                        <button
-                            onClick={() => setShowSkillForm(true)}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
-                        >
-                            Nueva Habilidad
-                        </button>
+                        <div className="flex space-x-3">
+                            <div className="flex bg-slate-800/50 rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => setSkillsViewMode('grid')}
+                                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                                        skillsViewMode === 'grid' 
+                                            ? 'bg-indigo-600 text-white' 
+                                            : 'text-slate-300 hover:text-white'
+                                    }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setSkillsViewMode('list')}
+                                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                                        skillsViewMode === 'list' 
+                                            ? 'bg-indigo-600 text-white' 
+                                            : 'text-slate-300 hover:text-white'
+                                    }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => setShowSkillForm(true)}
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                            >
+                                Nueva Habilidad
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        {skills.map(skill => (
-                            <div
-                                key={skill.id}
-                                className="flex flex-col p-4 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50"
-                            >
-                                <div className="flex items-center space-x-4 mb-4">
-                                    <div className="relative w-8 h-8">
-                                        <img
-                                            src={skill.icon}
-                                            alt={skill.name}
-                                            className="absolute top-0 left-0 w-full h-full"
-                                            style={{
-                                                objectFit: 'scale-down',
-                                                padding: '1px'
-                                            }}
-                                        />
+                    {isOrderUpdating && (
+                        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
+                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Actualizando orden...
+                        </div>
+                    )}
+
+                    {skillsViewMode === 'grid' ? (
+                        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                            {skills.map(skill => (
+                                <div
+                                    key={skill.id}
+                                    className="flex flex-col p-4 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50"
+                                >
+                                    <div className="flex items-center space-x-4 mb-4">
+                                        <div className="relative w-8 h-8">
+                                            <img
+                                                src={skill.icon}
+                                                alt={skill.name}
+                                                className="absolute top-0 left-0 w-full h-full"
+                                                style={{
+                                                    objectFit: 'scale-down',
+                                                    padding: '1px'
+                                                }}
+                                            />
+                                        </div>
+                                        <h3 className="text-lg font-medium text-slate-200">
+                                            {skill.name}
+                                        </h3>
                                     </div>
-                                    <h3 className="text-lg font-medium text-slate-200">
-                                        {skill.name}
-                                    </h3>
+                                    <div className="flex justify-end space-x-3 mt-auto">
+                                        <button
+                                            onClick={() => {
+                                                setEditingSkill(skill);
+                                                setShowSkillForm(true);
+                                            }}
+                                            className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            onClick={() => skill.id && handleDeleteSkill(skill.id)}
+                                            className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex justify-end space-x-3 mt-auto">
-                                    <button
-                                        onClick={() => {
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-slate-800/20 backdrop-blur-sm rounded-xl border border-slate-700/50 p-4">
+                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar las habilidades. El nuevo orden se guardará automáticamente.</p>
+                            <SortableList
+                                items={skills}
+                                itemKey={(skill) => skill.id || skill.name}
+                                renderItem={(skill) => (
+                                    <SkillPreview
+                                        skill={skill}
+                                        id={skill.id || skill.name}
+                                        onEdit={(skill) => {
                                             setEditingSkill(skill);
                                             setShowSkillForm(true);
                                         }}
-                                        className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => skill.id && handleDeleteSkill(skill.id)}
-                                        className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                        onDelete={(skillId) => handleDeleteSkill(skillId)}
+                                    />
+                                )}
+                                onReorder={handleSkillsReorder}
+                                droppableId="skills-list"
+                                className="space-y-2"
+                            />
+                        </div>
+                    )}
                 </section>
 
                 {/* Sección de Proyectos */}
@@ -550,12 +682,40 @@ const AdminPage: React.FC = () => {
                         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
                             Administrar Proyectos
                         </h2>
-                        <button
-                            onClick={() => setShowProjectForm(true)}
-                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
-                        >
-                            Nuevo Proyecto
-                        </button>
+                        <div className="flex space-x-3">
+                            <div className="flex bg-slate-800/50 rounded-lg overflow-hidden">
+                                <button
+                                    onClick={() => setProjectsViewMode('grid')}
+                                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                                        projectsViewMode === 'grid' 
+                                            ? 'bg-indigo-600 text-white' 
+                                            : 'text-slate-300 hover:text-white'
+                                    }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={() => setProjectsViewMode('list')}
+                                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                                        projectsViewMode === 'list' 
+                                            ? 'bg-indigo-600 text-white' 
+                                            : 'text-slate-300 hover:text-white'
+                                    }`}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button
+                                onClick={() => setShowProjectForm(true)}
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
+                            >
+                                Nuevo Proyecto
+                            </button>
+                        </div>
                     </div>
 
                     {error && (
@@ -564,47 +724,81 @@ const AdminPage: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {projects.map(project => (
-                            <div
-                                key={project.id}
-                                className="relative group bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden"
-                            >
-                                <div className="aspect-video">
-                                    <img
-                                        src={project.image}
-                                        alt={project.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <div className="p-4">
-                                    <h3 className="text-lg font-semibold text-slate-200 mb-2">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-sm text-slate-400 line-clamp-2 mb-4">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex justify-end space-x-3">
-                                        <button
-                                            onClick={() => {
-                                                setEditingProject(project);
-                                                setShowProjectForm(true);
-                                            }}
-                                            className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => project.id && handleDeleteProject(project.id)}
-                                            className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
-                                        >
-                                            Eliminar
-                                        </button>
+                    {isOrderUpdating && (
+                        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
+                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Actualizando orden...
+                        </div>
+                    )}
+
+                    {projectsViewMode === 'grid' ? (
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {projects.map(project => (
+                                <div
+                                    key={project.id}
+                                    className="relative group bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden"
+                                >
+                                    <div className="aspect-video">
+                                        <img
+                                            src={project.image}
+                                            alt={project.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="p-4">
+                                        <h3 className="text-lg font-semibold text-slate-200 mb-2">
+                                            {project.title}
+                                        </h3>
+                                        <p className="text-sm text-slate-400 line-clamp-2 mb-4">
+                                            {project.description}
+                                        </p>
+                                        <div className="flex justify-end space-x-3">
+                                            <button
+                                                onClick={() => {
+                                                    setEditingProject(project);
+                                                    setShowProjectForm(true);
+                                                }}
+                                                className="px-3 py-1 text-sm text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                onClick={() => project.id && handleDeleteProject(project.id)}
+                                                className="px-3 py-1 text-sm text-red-400 hover:text-white bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-slate-800/20 backdrop-blur-sm rounded-xl border border-slate-700/50 p-4">
+                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar los proyectos. El nuevo orden se guardará automáticamente.</p>
+                            <SortableList
+                                items={projects}
+                                itemKey={(project) => project.id || project.title}
+                                renderItem={(project) => (
+                                    <ProjectPreview
+                                        project={project}
+                                        id={project.id || project.title}
+                                        onEdit={(project) => {
+                                            setEditingProject(project);
+                                            setShowProjectForm(true);
+                                        }}
+                                        onDelete={(projectId) => handleDeleteProject(projectId)}
+                                    />
+                                )}
+                                onReorder={handleProjectsReorder}
+                                droppableId="projects-list"
+                                className="space-y-2"
+                            />
+                        </div>
+                    )}
                 </section>
             </div>
 

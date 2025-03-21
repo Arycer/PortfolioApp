@@ -6,6 +6,11 @@ export interface Project {
     title: string;
     description: string;
     image: string;
+    detailedDescription?: string;
+    technologies?: string[];
+    githubUrl?: string;
+    liveUrl?: string;
+    order?: number;
     link?: string;
     buttonText?: string;
 }

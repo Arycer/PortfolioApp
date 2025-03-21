@@ -60,6 +60,29 @@ const PortfolioPage: React.FC = () => {
                     ...doc.data()
                 })) as Job[];
 
+                // Sort projects and skills by order property if available
+                const sortedProjects = [...projectsList].sort((a, b) => {
+                    // If order is defined for both items, sort by order
+                    if (a.order !== undefined && b.order !== undefined) {
+                        return a.order - b.order;
+                    }
+                    // If only a has order, it comes first
+                    if (a.order !== undefined) return -1;
+                    // If only b has order, it comes first
+                    if (b.order !== undefined) return 1;
+                    // If neither has order, maintain original order
+                    return 0;
+                });
+
+                const sortedSkills = [...skillsList].sort((a, b) => {
+                    if (a.order !== undefined && b.order !== undefined) {
+                        return a.order - b.order;
+                    }
+                    if (a.order !== undefined) return -1;
+                    if (b.order !== undefined) return 1;
+                    return 0;
+                });
+
                 // Tomamos el primer documento de aboutMe (solo debería haber uno)
                 const aboutMeData = aboutMeSnapshot.docs[0];
                 if (aboutMeData) {
@@ -69,8 +92,8 @@ const PortfolioPage: React.FC = () => {
                     } as AboutMeData);
                 }
 
-                setProjects(projectsList);
-                setSkills(skillsList);
+                setProjects(sortedProjects);
+                setSkills(sortedSkills);
                 setStudies(studiesList);
                 setJobs(jobsList);
                 setError(null);
