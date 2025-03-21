@@ -4,7 +4,6 @@ import SortableList from '../SortableList/SortableList';
 import SocialLinkPreview from '../SortableList/SocialLinkPreview';
 import ImageUploader from '../ImageUploader/ImageUploader';
 import { getImages, ImageInfo } from '../../services/storageService';
-import ImagePreview from '../ImagePreview/ImagePreview';
 
 interface AboutMeFormProps {
     data?: AboutMeData;
@@ -109,7 +108,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
             setEditingSocialLink({...editingSocialLink, link: updatedLink});
         } else {
             // Si estamos creando una nueva red social
-            setNewSocialLink(prev => ({...prev, [name]: value}));
+        setNewSocialLink(prev => ({...prev, [name]: value}));
         }
     };
 
@@ -290,7 +289,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                             />
                                         </div>
                                         
-                                        <div>
+            <div>
                                             <h4 className="text-sm font-medium text-white mb-3">Imágenes Disponibles</h4>
                                             
                                             {loadingImages ? (
@@ -339,32 +338,32 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
 
                     <div className="bg-slate-800/30 p-5 rounded-lg border border-slate-700/40 shadow-md">
                         <label htmlFor="greeting" className="block text-sm font-medium text-white mb-1.5">
-                            Saludo
-                        </label>
-                        <input
-                            type="text"
-                            id="greeting"
-                            name="greeting"
-                            value={formData.greeting}
-                            onChange={handleChange}
+                    Saludo
+                </label>
+                <input
+                    type="text"
+                    id="greeting"
+                    name="greeting"
+                    value={formData.greeting}
+                    onChange={handleChange}
                             className="mt-1 block w-full px-4 py-3 text-base rounded-lg bg-slate-900/60 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            required
+                    required
                             placeholder="Ej: Hola, mi nombre es..."
-                        />
-                    </div>
+                />
+            </div>
 
                     <div className="bg-slate-800/30 p-5 rounded-lg border border-slate-700/40 shadow-md">
                         <label htmlFor="description" className="block text-sm font-medium text-white mb-1.5">
-                            Descripción
-                        </label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
+                    Descripción
+                </label>
+                <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
                             rows={5}
                             className="mt-1 block w-full px-4 py-3 text-base rounded-lg bg-slate-900/60 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                            required
+                    required
                             placeholder="Escribe una breve descripción sobre ti..."
                         />
                     </div>
@@ -381,16 +380,16 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                             onChange={handleChange}
                             className="mt-1 block w-full px-4 py-3 text-base rounded-lg bg-slate-900/60 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             placeholder="tu@email.com"
-                        />
-                    </div>
+                />
+            </div>
 
                     {/* Sección colapsada de redes sociales */}
                     <div className="bg-slate-800/30 p-5 rounded-lg border border-slate-700/40 shadow-md">
                         <div className="flex justify-between items-center">
                             <div className="flex items-center space-x-3">
                                 <label className="text-sm font-medium text-white">
-                                    Redes Sociales
-                                </label>
+                    Redes Sociales
+                </label>
                                 <span className="text-xs text-slate-200 bg-indigo-600/30 px-2.5 py-0.5 rounded-full border border-indigo-500/40">
                                     {formData.socialLinks.length}
                                 </span>
@@ -502,8 +501,8 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                     Ordenar Lista
                                 </div>
                             </button>
-                        </div>
-                        
+                </div>
+
                         {socialLinksViewMode === 'form' ? (
                             <>
                                 {/* Lista de redes sociales */}
@@ -563,50 +562,50 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                     </h3>
                                     
                                     <div className="space-y-4 mb-6">
-                                        <div>
+                    <div>
                                             <label className="block text-xs font-medium text-slate-300 mb-1.5">
                                                 <span className="flex items-center">
                                                     Nombre 
                                                     <span className="text-red-400 ml-1">*</span>
                                                 </span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                name="name"
+                        <input
+                            type="text"
+                            name="name"
                                                 value={editingSocialLink ? editingSocialLink.link.name : newSocialLink.name}
-                                                onChange={handleSocialLinkChange}
+                            onChange={handleSocialLinkChange}
                                                 placeholder="Ej: LinkedIn, GitHub, Twitter..."
                                                 className="w-full px-4 py-2.5 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                                            />
-                                        </div>
-                                        <div>
+                        />
+                    </div>
+                    <div>
                                             <label className="block text-xs font-medium text-slate-300 mb-1.5">
                                                 <span className="flex items-center">
                                                     URL de la red social
                                                     <span className="text-red-400 ml-1">*</span>
                                                 </span>
                                             </label>
-                                            <input
-                                                type="url"
-                                                name="url"
+                        <input
+                            type="url"
+                            name="url"
                                                 value={editingSocialLink ? editingSocialLink.link.url : newSocialLink.url}
-                                                onChange={handleSocialLinkChange}
+                            onChange={handleSocialLinkChange}
                                                 placeholder="https://www.ejemplo.com/perfil"
                                                 className="w-full px-4 py-2.5 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                                            />
-                                        </div>
-                                        <div>
+                        />
+                    </div>
+                    <div>
                                             <label className="block text-xs font-medium text-slate-300 mb-1.5">
                                                 <span className="flex items-center">
                                                     URL del ícono
                                                     <span className="text-red-400 ml-1">*</span>
                                                 </span>
                                             </label>
-                                            <input
-                                                type="url"
-                                                name="icon"
+                        <input
+                            type="url"
+                            name="icon"
                                                 value={editingSocialLink ? editingSocialLink.link.icon : newSocialLink.icon}
-                                                onChange={handleSocialLinkChange}
+                            onChange={handleSocialLinkChange}
                                                 placeholder="URL de la imagen del ícono"
                                                 className="w-full px-4 py-2.5 rounded-lg bg-slate-900/70 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                                             />
@@ -622,20 +621,20 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                                 </a>
                                                 o cualquier otra fuente de iconos
                                             </p>
-                                        </div>
-                                    </div>
-                                    
+                    </div>
+                </div>
+
                                     <div className="flex justify-end space-x-3">
                                         {editingSocialLink ? (
                                             <>
-                                                <button
-                                                    type="button"
+                <button
+                    type="button"
                                                     onClick={handleCancelSocialLinkEdit}
                                                     className="px-4 py-2 text-sm text-slate-300 bg-slate-700/50 hover:bg-slate-700 rounded-md transition-colors duration-200"
-                                                >
-                                                    Cancelar
-                                                </button>
-                                                <button
+                >
+                    Cancelar
+                </button>
+                <button
                                                     type="button"
                                                     onClick={handleSaveSocialLinkEdit}
                                                     className="px-4 py-2 text-sm text-white bg-indigo-600/80 hover:bg-indigo-600 rounded-md transition-colors duration-200 flex items-center"
@@ -657,7 +656,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                                 </svg>
                                                 Añadir Red Social
-                                            </button>
+                </button>
                                         )}
                                     </div>
                                 </div>
