@@ -1,5 +1,5 @@
 import React from 'react';
-import { SocialLink, AboutMeData } from '../../types';
+import { AboutMeData } from '../../types';
 
 interface AboutMeProps {
     data: AboutMeData;
