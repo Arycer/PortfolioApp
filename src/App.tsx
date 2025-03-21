@@ -8,12 +8,20 @@ import PortfolioPage from './pages/Portfolio';
 import AdminPage from './pages/Admin';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import StarBackground from './components/StarBackground/StarBackground.tsx';
+import { useEffect } from 'react';
 
 function App() {
+    // Verificar que el componente se carga correctamente
+    useEffect(() => {
+        console.log("App component mounted");
+    }, []);
+
     return (
         <AuthProvider>
             <BrowserRouter>
-                <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                <StarBackground />
+                <div className="min-h-screen flex flex-col relative">
                     <Header />
                     <main className="flex-1 py-12">
                         <Routes>
