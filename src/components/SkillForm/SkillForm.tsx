@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Skill } from '../SkillGrid/SkillGrid';
+import React, {useEffect, useState} from 'react';
+import {Skill} from '../SkillGrid/SkillGrid';
 
 interface SkillFormProps {
     skill?: Skill;
@@ -9,11 +9,11 @@ interface SkillFormProps {
 }
 
 const SkillForm: React.FC<SkillFormProps> = ({
-    skill,
-    onSubmit,
-    onCancel,
-    isSubmitting
-}) => {
+                                                 skill,
+                                                 onSubmit,
+                                                 onCancel,
+                                                 isSubmitting
+                                             }) => {
     const [formData, setFormData] = useState<Omit<Skill, 'id'>>({
         name: '',
         icon: ''
@@ -21,14 +21,14 @@ const SkillForm: React.FC<SkillFormProps> = ({
 
     useEffect(() => {
         if (skill) {
-            const { id, ...skillData } = skill;
+            const {id, ...skillData} = skill;
             setFormData(skillData);
         }
     }, [skill]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

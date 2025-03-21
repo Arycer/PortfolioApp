@@ -6,7 +6,7 @@ interface LinkButtonProps {
     className?: string;
 }
 
-const LinkButton: React.FC<LinkButtonProps> = ({ href, text = 'Ver proyecto', className = '' }) => {
+const LinkButton: React.FC<LinkButtonProps> = ({href, text = 'Ver proyecto', className = ''}) => {
     return (
         <a
             href={href}

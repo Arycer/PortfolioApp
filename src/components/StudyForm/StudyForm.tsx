@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Study } from '../StudyCard/StudyCard';
+import React, {useEffect, useState} from 'react';
+import {Study} from '../StudyCard/StudyCard';
 
 interface StudyFormProps {
     study?: Study;
@@ -9,11 +9,11 @@ interface StudyFormProps {
 }
 
 const StudyForm: React.FC<StudyFormProps> = ({
-    study,
-    onSubmit,
-    onCancel,
-    isSubmitting
-}) => {
+                                                 study,
+                                                 onSubmit,
+                                                 onCancel,
+                                                 isSubmitting
+                                             }) => {
     const [formData, setFormData] = useState<Omit<Study, 'id'>>({
         title: '',
         institution: '',
@@ -25,14 +25,14 @@ const StudyForm: React.FC<StudyFormProps> = ({
 
     useEffect(() => {
         if (study) {
-            const { id, ...studyData } = study;
+            const {id, ...studyData} = study;
             setFormData(studyData);
         }
     }, [study]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

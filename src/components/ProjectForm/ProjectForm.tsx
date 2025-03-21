@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Project } from '../ProjectCard/ProjectCard';
+import React, {useEffect, useState} from 'react';
+import {Project} from '../ProjectCard/ProjectCard';
 
 interface ProjectFormProps {
     project?: Project;
@@ -9,11 +9,11 @@ interface ProjectFormProps {
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({
-    project,
-    onSubmit,
-    onCancel,
-    isSubmitting
-}) => {
+                                                     project,
+                                                     onSubmit,
+                                                     onCancel,
+                                                     isSubmitting
+                                                 }) => {
     const [formData, setFormData] = useState<Omit<Project, 'id'>>({
         title: '',
         description: '',
@@ -24,14 +24,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
     useEffect(() => {
         if (project) {
-            const { id, ...projectData } = project;
+            const {id, ...projectData} = project;
             setFormData(projectData);
         }
     }, [project]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +40,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
+        <form onSubmit={handleSubmit}
+              className="space-y-6 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
             <div>
                 <label htmlFor="title" className="block text-sm font-medium text-slate-300">
                     Título

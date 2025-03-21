@@ -1,8 +1,8 @@
 // src/components/Header.tsx
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../../context/AuthContext';
+import {useAuth} from '../../context/AuthContext';
 
 // Definición de styled components usando .attrs para inyectar las clases de Tailwind
 const HeaderContainer = styled.header.attrs({
@@ -30,7 +30,7 @@ const DropdownItem = styled.button.attrs({
 })``;
 
 const Header: React.FC = () => {
-    const { user, signOut } = useAuth();
+    const {user, signOut} = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const menuRef = useRef<HTMLDivElement>(null);
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
             <TitleLink to="/">Arycer</TitleLink>
             {user && (
                 <ProfileContainer>
-                    <ProfileImage src="/arycer.png" alt="Logo Arycer" onClick={handleProfileClick} />
+                    <ProfileImage src="/arycer.png" alt="Logo Arycer" onClick={handleProfileClick}/>
                     {showMenu && (
                         <DropdownMenu ref={menuRef}>
                             <DropdownItem onClick={handleGoToAdmin}>Panel Admin</DropdownItem>

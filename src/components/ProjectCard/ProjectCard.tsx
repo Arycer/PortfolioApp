@@ -20,9 +20,10 @@ interface ProjectCardProps {
     onClick?: () => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({project, onClick}) => {
     return (
-        <div className="relative bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden transition-all duration-300 ease-in-out">
+        <div
+            className="relative bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden transition-all duration-300 ease-in-out">
             <div
                 onClick={onClick}
                 className="group cursor-pointer"
@@ -45,8 +46,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             </div>
             {project.link && (
                 <div className="p-4 pt-0" onClick={e => e.stopPropagation()}>
-                    <LinkButton 
-                        href={project.link} 
+                    <LinkButton
+                        href={project.link}
                         text={project.buttonText}
                     />
                 </div>

@@ -18,14 +18,16 @@ interface AboutMeProps {
     data: AboutMeData;
 }
 
-const AboutMe: React.FC<AboutMeProps> = ({ data }) => {
+const AboutMe: React.FC<AboutMeProps> = ({data}) => {
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="flex flex-col items-center text-center">
                 {/* Logo con efecto de fundido */}
                 <div className="relative w-48 h-48 mb-8">
-                    <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 rounded-full blur-2xl"></div>
+                    <div
+                        className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+                    <div
+                        className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 rounded-full blur-2xl"></div>
                     <img
                         src="/arycer.png"
                         alt="Arycer Logo"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Project } from '../ProjectCard/ProjectCard';
+import {Project} from '../ProjectCard/ProjectCard';
 import Modal from '../Modal/Modal';
 import LinkButton from '../LinkButton/LinkButton';
 
@@ -9,7 +9,7 @@ interface ProjectDetailProps {
     onClose: () => void;
 }
 
-const ProjectDetail: React.FC<ProjectDetailProps> = ({ project, isOpen, onClose }) => {
+const ProjectDetail: React.FC<ProjectDetailProps> = ({project, isOpen, onClose}) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} title={project.title}>
             <div className="space-y-6">
@@ -31,8 +31,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ project, isOpen, onClose 
                     {/* Botón de acción si hay link */}
                     {project.link && (
                         <div className="flex justify-end">
-                            <LinkButton 
-                                href={project.link} 
+                            <LinkButton
+                                href={project.link}
                                 text={project.buttonText}
                             />
                         </div>

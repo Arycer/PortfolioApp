@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { SocialLink } from '../AboutMe/AboutMe';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import React, {useState} from 'react';
+import {SocialLink} from '../AboutMe/AboutMe';
+import {getFunctions, httpsCallable} from 'firebase/functions';
 
 interface ContactSectionProps {
     socialLinks: SocialLink[];
 }
 
-const ContactSection: React.FC<ContactSectionProps> = ({ socialLinks }) => {
+const ContactSection: React.FC<ContactSectionProps> = ({socialLinks}) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -16,22 +16,22 @@ const ContactSection: React.FC<ContactSectionProps> = ({ socialLinks }) => {
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         try {
             const functions = getFunctions();
             const sendEmail = httpsCallable(functions, 'sendEmail');
-            
+
             await sendEmail(formData);
-            
+
             setSubmitStatus('success');
-            setFormData({ name: '', email: '', message: '' });
+            setFormData({name: '', email: '', message: ''});
         } catch (error) {
             console.error('Error sending email:', error);
             setSubmitStatus('error');
@@ -111,13 +111,15 @@ const ContactSection: React.FC<ContactSectionProps> = ({ socialLinks }) => {
                             </button>
 
                             {submitStatus === 'success' && (
-                                <div className="p-4 text-sm text-emerald-400 bg-emerald-900/50 rounded-lg border border-emerald-800/50">
+                                <div
+                                    className="p-4 text-sm text-emerald-400 bg-emerald-900/50 rounded-lg border border-emerald-800/50">
                                     Mensaje enviado correctamente.
                                 </div>
                             )}
 
                             {submitStatus === 'error' && (
-                                <div className="p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
+                                <div
+                                    className="p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
                                     Error al enviar el mensaje. Por favor, intenta de nuevo.
                                 </div>
                             )}
@@ -157,7 +159,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({ socialLinks }) => {
                                 Información adicional
                             </h3>
                             <p className="text-slate-400">
-                                También puedes contactarme directamente por correo electrónico o a través de mis redes sociales.
+                                También puedes contactarme directamente por correo electrónico o a través de mis redes
+                                sociales.
                                 Responderé lo antes posible.
                             </p>
                         </div>

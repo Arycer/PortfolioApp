@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AboutMeData, SocialLink } from '../AboutMe/AboutMe';
+import React, {useEffect, useState} from 'react';
+import {AboutMeData, SocialLink} from '../AboutMe/AboutMe';
 
 interface AboutMeFormProps {
     data?: AboutMeData;
@@ -9,11 +9,11 @@ interface AboutMeFormProps {
 }
 
 const AboutMeForm: React.FC<AboutMeFormProps> = ({
-    data,
-    onSubmit,
-    onCancel,
-    isSubmitting
-}) => {
+                                                     data,
+                                                     onSubmit,
+                                                     onCancel,
+                                                     isSubmitting
+                                                 }) => {
     const [formData, setFormData] = useState<Omit<AboutMeData, 'id'>>({
         greeting: '',
         description: '',
@@ -28,19 +28,19 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
 
     useEffect(() => {
         if (data) {
-            const { id, ...aboutData } = data;
+            const {id, ...aboutData} = data;
             setFormData(aboutData);
         }
     }, [data]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSocialLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setNewSocialLink(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setNewSocialLink(prev => ({...prev, [name]: value}));
     };
 
     const handleAddSocialLink = () => {
@@ -49,7 +49,7 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                 ...prev,
                 socialLinks: [...prev.socialLinks, newSocialLink]
             }));
-            setNewSocialLink({ name: '', url: '', icon: '' });
+            setNewSocialLink({name: '', url: '', icon: ''});
         }
     };
 
@@ -105,8 +105,9 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                 {/* Lista de redes sociales */}
                 <div className="space-y-3">
                     {formData.socialLinks.map((link, index) => (
-                        <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                            <img src={link.icon} alt={link.name} className="w-5 h-5" />
+                        <div key={index}
+                             className="flex items-center gap-4 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                            <img src={link.icon} alt={link.name} className="w-5 h-5"/>
                             <div className="flex-1">
                                 <div className="font-medium text-slate-200">{link.name}</div>
                                 <div className="text-sm text-slate-400">{link.url}</div>

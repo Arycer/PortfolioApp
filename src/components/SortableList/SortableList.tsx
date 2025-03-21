@@ -1,19 +1,14 @@
 import React from 'react';
 import {
-    DndContext,
     closestCenter,
+    DndContext,
+    DragEndEvent,
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors,
-    DragEndEvent
+    useSensors
 } from '@dnd-kit/core';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy
-} from '@dnd-kit/sortable';
+import {arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 
 interface SortableListProps<T> {
     items: T[];
@@ -25,13 +20,12 @@ interface SortableListProps<T> {
 }
 
 function SortableList<T>({
-    items,
-    itemKey,
-    renderItem,
-    onReorder,
-    droppableId,
-    className = ''
-}: SortableListProps<T>) {
+                             items,
+                             itemKey,
+                             renderItem,
+                             onReorder,
+                             className = ''
+                         }: SortableListProps<T>) {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -44,7 +38,7 @@ function SortableList<T>({
     );
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        const {active, over} = event;
 
         if (over && active.id !== over.id) {
             const oldIndex = items.findIndex(item => itemKey(item) === active.id);

@@ -11,7 +11,7 @@ interface SkillGridProps {
     skills: Skill[];
 }
 
-const SkillGrid: React.FC<SkillGridProps> = ({ skills }) => {
+const SkillGrid: React.FC<SkillGridProps> = ({skills}) => {
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {skills.map((skill) => (

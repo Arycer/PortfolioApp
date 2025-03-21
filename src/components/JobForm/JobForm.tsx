@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Job } from '../JobCard/JobCard';
+import React, {useEffect, useState} from 'react';
+import {Job} from '../JobCard/JobCard';
 
 interface JobFormProps {
     job?: Job;
@@ -9,11 +9,11 @@ interface JobFormProps {
 }
 
 const JobForm: React.FC<JobFormProps> = ({
-    job,
-    onSubmit,
-    onCancel,
-    isSubmitting
-}) => {
+                                             job,
+                                             onSubmit,
+                                             onCancel,
+                                             isSubmitting
+                                         }) => {
     const [formData, setFormData] = useState<Omit<Job, 'id'>>({
         title: '',
         company: '',
@@ -27,14 +27,14 @@ const JobForm: React.FC<JobFormProps> = ({
 
     useEffect(() => {
         if (job) {
-            const { id, ...jobData } = job;
+            const {id, ...jobData} = job;
             setFormData(jobData);
         }
     }, [job]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name]: value}));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

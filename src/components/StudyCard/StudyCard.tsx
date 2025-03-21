@@ -14,9 +14,10 @@ interface StudyCardProps {
     study: Study;
 }
 
-const StudyCard: React.FC<StudyCardProps> = ({ study }) => {
+const StudyCard: React.FC<StudyCardProps> = ({study}) => {
     return (
-        <div className="bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden hover:border-slate-600/50 transition-all duration-300">
+        <div
+            className="bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden hover:border-slate-600/50 transition-all duration-300">
             <div className="flex gap-6 p-6">
                 <div className="flex-shrink-0">
                     <img

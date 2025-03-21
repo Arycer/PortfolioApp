@@ -1,10 +1,10 @@
-import { useState, FormEvent } from 'react';
+import {FormEvent, useState} from 'react';
 
 interface LoginFormProps {
     onSubmit: (email: string, password: string) => void;
 }
 
-const LoginForm = ({ onSubmit }: LoginFormProps) => {
+const LoginForm = ({onSubmit}: LoginFormProps) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -14,7 +14,8 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
     };
 
     return (
-        <div className="w-full max-w-xl p-8 space-y-8 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 shadow-2xl">
+        <div
+            className="w-full max-w-xl p-8 space-y-8 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 shadow-2xl">
             <div className="text-center">
                 <h2 className="text-3xl font-bold tracking-tight text-slate-200">
                     Iniciar Sesión
