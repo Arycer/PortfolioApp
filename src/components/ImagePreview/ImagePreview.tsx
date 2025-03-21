@@ -18,9 +18,9 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleCopyUrl = () => {
-    const cleanUrl = image.url.split('?')[0];
+    const fullUrl = image.url;
     
-    navigator.clipboard.writeText(cleanUrl)
+    navigator.clipboard.writeText(fullUrl)
       .then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
