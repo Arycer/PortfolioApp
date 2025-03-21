@@ -1,16 +1,7 @@
 import { storage } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-
-export interface ImageInfo {
-  id: string;
-  name: string;
-  url: string;
-  path: string;
-  type?: string;
-  size?: number;
-  createdAt: Date;
-}
+import { ImageInfo } from '../types';
 
 /**
  * Sube una imagen a Firebase Storage

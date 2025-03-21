@@ -1,14 +1,5 @@
 import React from 'react';
-
-export interface Study {
-    id?: string;
-    title: string;
-    institution: string;
-    description: string;
-    startDate: string;
-    endDate?: string;
-    logo: string;
-}
+import { Study } from '../../types';
 
 interface StudyCardProps {
     study: Study;

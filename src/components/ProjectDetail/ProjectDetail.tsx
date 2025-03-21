@@ -1,5 +1,5 @@
 import React from 'react';
-import {Project} from '../ProjectCard/ProjectCard';
+import { Project } from '../../types';
 import Modal from '../Modal/Modal';
 import LinkButton from '../LinkButton/LinkButton';
 

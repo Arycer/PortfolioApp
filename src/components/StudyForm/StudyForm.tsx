@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Study} from '../StudyCard/StudyCard';
+import { Study, ImageInfo } from '../../types';
 import Modal from '../Modal/Modal';
-import { getImages, ImageInfo } from '../../services/storageService';
+import { getImages } from '../../services/storageService';
 
 interface StudyFormProps {
     study?: Study;

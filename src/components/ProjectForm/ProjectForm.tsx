@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Project} from '../ProjectCard/ProjectCard';
+import { Project, ImageInfo } from '../../types';
 import ImageUploader from '../ImageUploader/ImageUploader';
-import { getImages, ImageInfo } from '../../services/storageService';
+import { getImages } from '../../services/storageService';
 
 interface ProjectFormProps {
     project?: Project;

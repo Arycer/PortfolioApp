@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ImageInfo } from '../../services/storageService';
+import { ImageInfo } from '../../types';
 
 interface ImagePreviewProps {
   image: ImageInfo;

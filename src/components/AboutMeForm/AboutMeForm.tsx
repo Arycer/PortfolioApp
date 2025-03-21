@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {AboutMeData, SocialLink} from '../AboutMe/AboutMe';
+import { AboutMeData, SocialLink, ImageInfo } from '../../types';
 import SortableList from '../SortableList/SortableList';
 import SocialLinkPreview from '../SortableList/SocialLinkPreview';
 import ImageUploader from '../ImageUploader/ImageUploader';
-import { getImages, ImageInfo } from '../../services/storageService';
+import { getImages } from '../../services/storageService';
 
 interface AboutMeFormProps {
     data?: AboutMeData;

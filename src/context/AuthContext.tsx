@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { 
     User,
     signInWithEmailAndPassword,
@@ -6,13 +6,7 @@ import {
     onAuthStateChanged
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
-
-interface AuthContextType {
-    user: User | null;
-    loading: boolean;
-    signIn: (email: string, password: string) => Promise<void>;
-    signOut: () => Promise<void>;
-}
+import { AuthContextType, AuthProviderProps } from '../types';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -23,10 +17,6 @@ export const useAuth = () => {
     }
     return context;
 };
-
-interface AuthProviderProps {
-    children: ReactNode;
-}
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);

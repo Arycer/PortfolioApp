@@ -1,18 +1,6 @@
 import React from 'react';
 import LinkButton from '../LinkButton/LinkButton';
-
-export interface Project {
-    id?: string;
-    title: string;
-    description: string;
-    image: string;
-    detailedDescription?: string;
-    technologies?: string[];
-    githubUrl?: string;
-    order?: number;
-    link?: string;
-    buttonText?: string;
-}
+import { Project } from '../../types';
 
 interface ProjectCardProps {
     project: Project;

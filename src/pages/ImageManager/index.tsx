@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getImages, deleteImage, ImageInfo, uploadImageFromURL } from '../../services/storageService';
+import { getImages, deleteImage, uploadImageFromURL } from '../../services/storageService';
+import { ImageInfo } from '../../types';
 import ImageUploader from '../../components/ImageUploader/ImageUploader';
 import ImagePreview from '../../components/ImagePreview/ImagePreview';
 

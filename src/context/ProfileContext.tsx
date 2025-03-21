@@ -1,14 +1,7 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { AboutMeData } from '../components/AboutMe/AboutMe';
-
-interface ProfileContextProps {
-  profileData: AboutMeData | null;
-  isLoading: boolean;
-  error: string | null;
-  refreshProfileData: () => Promise<void>;
-}
+import { AboutMeData, ProfileContextProps, ProfileProviderProps } from '../types';
 
 const defaultContextValue: ProfileContextProps = {
   profileData: null,
@@ -21,11 +14,7 @@ const ProfileContext = createContext<ProfileContextProps>(defaultContextValue);
 
 export const useProfile = () => useContext(ProfileContext);
 
-interface ProfileProviderProps {
-  children: ReactNode;
-}
-
-export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) => {
+export const ProfileProvider = ({ children }: ProfileProviderProps) => {
   const [profileData, setProfileData] = useState<AboutMeData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

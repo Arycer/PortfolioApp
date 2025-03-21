@@ -1,16 +1,5 @@
 import React from 'react';
-
-export interface Job {
-    id?: string;
-    title: string;
-    company: string;
-    description: string;
-    startDate: string;
-    endDate?: string;
-    logo: string;
-    gradientFrom: string;
-    gradientTo: string;
-}
+import { Job } from '../../types';
 
 interface JobCardProps {
     job: Job;

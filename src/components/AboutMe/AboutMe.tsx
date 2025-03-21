@@ -1,22 +1,5 @@
 import React from 'react';
-
-export interface SocialLink {
-    id?: string;
-    name: string;
-    url: string;
-    icon: string;
-    order?: number;
-}
-
-export interface AboutMeData {
-    id?: string;
-    username: string; // Nombre que aparecerá en el Header
-    greeting: string;
-    description: string;
-    socialLinks: SocialLink[];
-    contactEmail?: string;
-    profileImage?: string; // URL de la imagen de perfil
-}
+import { SocialLink, AboutMeData } from '../../types';
 
 interface AboutMeProps {
     data: AboutMeData;

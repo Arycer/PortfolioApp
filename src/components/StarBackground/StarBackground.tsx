@@ -1,26 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-
-interface Star {
-    x: number;
-    y: number;
-    size: number;
-    speed: number;
-    opacity: number;
-    twinkleSpeed: number;
-    twinkleDirection: boolean;
-    color: string;
-}
-
-interface ShootingStar {
-    x: number;
-    y: number;
-    length: number;
-    speed: number;
-    opacity: number;
-    angle: number;
-    life: number;
-    maxLife: number;
-}
+import { Star, ShootingStar } from '../../types';
 
 const StarBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SocialLink} from '../AboutMe/AboutMe';
+import { SocialLink } from '../../types';
 import {getFunctions, httpsCallable} from 'firebase/functions';
 
 interface ContactSectionProps {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Job} from '../JobCard/JobCard';
+import { Job, ImageInfo } from '../../types';
 import Modal from '../Modal/Modal';
-import { getImages, ImageInfo } from '../../services/storageService';
+import { getImages } from '../../services/storageService';
 
 interface JobFormProps {
     job?: Job;

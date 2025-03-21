@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { Project } from '../../components/ProjectCard/ProjectCard';
-import { Skill } from '../../components/SkillGrid/SkillGrid';
-import { Study } from '../../components/StudyCard/StudyCard';
-import { Job } from '../../components/JobCard/JobCard';
-import { AboutMeData } from '../../components/AboutMe/AboutMe';
+import { Project, Skill, Study, Job, AboutMeData } from '../../types';
 import ProjectForm from '../../components/ProjectForm/ProjectForm';
 import SkillForm from '../../components/SkillForm/SkillForm';
 import StudyForm from '../../components/StudyForm/StudyForm';

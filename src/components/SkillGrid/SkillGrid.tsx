@@ -1,11 +1,5 @@
 import React from 'react';
-
-export interface Skill {
-    id?: string;
-    name: string;
-    icon: string;
-    order?: number;
-}
+import { Skill } from '../../types';
 
 interface SkillGridProps {
     skills: Skill[];

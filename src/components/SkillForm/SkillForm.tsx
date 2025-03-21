@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Skill} from '../SkillGrid/SkillGrid';
+import { Skill, ImageInfo } from '../../types';
 import Modal from '../Modal/Modal';
-import { getImages, ImageInfo } from '../../services/storageService';
+import { getImages } from '../../services/storageService';
 
 interface SkillFormProps {
     skill?: Skill;

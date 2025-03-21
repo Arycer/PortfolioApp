@@ -3,7 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import ProjectGrid from '../../components/ProjectGrid/ProjectGrid';
 import ProjectDetail from '../../components/ProjectDetail/ProjectDetail';
-import { Project } from '../../components/ProjectCard/ProjectCard';
+import { Project } from '../../types';
 
 const ProjectsPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
