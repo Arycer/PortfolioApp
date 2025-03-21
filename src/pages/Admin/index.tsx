@@ -15,7 +15,6 @@ import StudyCard from '../../components/StudyCard/StudyCard';
 import JobCard from '../../components/JobCard/JobCard';
 import AboutMe from '../../components/AboutMe/AboutMe';
 import Modal from '../../components/Modal/Modal';
-import { useAuth } from '../../context/AuthContext';
 
 const AdminPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -34,7 +33,6 @@ const AdminPage: React.FC = () => {
     const [showStudyForm, setShowStudyForm] = useState(false);
     const [showJobForm, setShowJobForm] = useState(false);
     const [showAboutMeForm, setShowAboutMeForm] = useState(false);
-    const { user } = useAuth();
     const [aboutMe, setAboutMe] = useState<AboutMeData | null>(null);
 
     const fetchData = async () => {
