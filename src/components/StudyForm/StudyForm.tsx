@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {Study} from '../StudyCard/StudyCard';
 import Modal from '../Modal/Modal';
 import { getImages, ImageInfo } from '../../services/storageService';
-import ImagePreview from '../ImagePreview/ImagePreview';
 
 interface StudyFormProps {
     study?: Study;
