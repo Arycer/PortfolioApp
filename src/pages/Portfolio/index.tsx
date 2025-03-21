@@ -12,6 +12,8 @@ import StudyCard from '../../components/StudyCard/StudyCard';
 import JobCard from '../../components/JobCard/JobCard';
 import AboutMe from '../../components/AboutMe/AboutMe';
 import ContactSection from '../../components/ContactSection/ContactSection';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const PortfolioPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -22,8 +24,18 @@ const PortfolioPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [showScrollTop, setShowScrollTop] = useState(false);
 
     useEffect(() => {
+        // Inicializar AOS
+        AOS.init({
+            duration: 800,
+            once: false,
+            mirror: true,
+            offset: 100,
+            easing: 'ease-in-out'
+        });
+
         const fetchData = async () => {
             try {
                 const [
@@ -106,7 +118,28 @@ const PortfolioPage: React.FC = () => {
         };
 
         fetchData();
+
+        // Configurar el listener para el scroll
+        const handleScroll = () => {
+            if (window.scrollY > 500) {
+                setShowScrollTop(true);
+            } else {
+                setShowScrollTop(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Actualizar AOS cuando cambia el estado de carga
+    useEffect(() => {
+        if (!loading) {
+            setTimeout(() => {
+                AOS.refresh();
+            }, 100);
+        }
+    }, [loading]);
 
     const handleProjectClick = (project: Project) => {
         setSelectedProject(project);
@@ -114,6 +147,13 @@ const PortfolioPage: React.FC = () => {
 
     const handleCloseDetail = () => {
         setSelectedProject(null);
+    };
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     };
 
     if (loading) {
@@ -128,14 +168,18 @@ const PortfolioPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-24">
+        <div className="space-y-24 relative">
             {/* Sección About Me */}
-            {aboutMe && <AboutMe data={aboutMe} />}
+            {aboutMe && (
+                <div data-aos="fade-down">
+                    <AboutMe data={aboutMe} />
+                </div>
+            )}
 
             {/* Sección de Skills */}
-            <section>
+            <section data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
                             Mis Habilidades
                         </h2>
@@ -144,14 +188,16 @@ const PortfolioPage: React.FC = () => {
                         </p>
                     </div>
 
-                    <SkillGrid skills={skills} />
+                    <div data-aos="fade-up" data-aos-delay="200">
+                        <SkillGrid skills={skills} />
+                    </div>
                 </div>
             </section>
 
             {/* Sección de Estudios */}
-            <section>
+            <section data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
                             Mi Formación
                         </h2>
@@ -161,17 +207,23 @@ const PortfolioPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-6">
-                        {studies.map(study => (
-                            <StudyCard key={study.id} study={study} />
+                        {studies.map((study, index) => (
+                            <div 
+                                key={study.id} 
+                                data-aos="fade-right" 
+                                data-aos-delay={100 + (index * 50)}
+                            >
+                                <StudyCard study={study} />
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* Sección de Experiencia Laboral */}
-            <section>
+            <section data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
                             Mi Experiencia
                         </h2>
@@ -181,17 +233,23 @@ const PortfolioPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-8">
-                        {jobs.map(job => (
-                            <JobCard key={job.id} job={job} />
+                        {jobs.map((job, index) => (
+                            <div 
+                                key={job.id} 
+                                data-aos="fade-left" 
+                                data-aos-delay={100 + (index * 50)}
+                            >
+                                <JobCard job={job} />
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* Sección de Proyectos */}
-            <section>
+            <section data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
+                    <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
                             Mis Proyectos
                         </h2>
@@ -206,12 +264,18 @@ const PortfolioPage: React.FC = () => {
                         </div>
                     )}
 
-                    <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
+                    <div data-aos="fade-up" data-aos-delay="200">
+                        <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
+                    </div>
                 </div>
             </section>
 
             {/* Sección de Contacto */}
-            {aboutMe && <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail} />}
+            {aboutMe && (
+                <div data-aos="fade-up" data-aos-offset="200">
+                    <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail} />
+                </div>
+            )}
 
             {selectedProject && (
                 <ProjectDetail
@@ -220,6 +284,19 @@ const PortfolioPage: React.FC = () => {
                     onClose={handleCloseDetail}
                 />
             )}
+
+            {/* Botón de scroll to top */}
+            <button 
+                onClick={scrollToTop}
+                className={`fixed right-6 bottom-6 p-3 rounded-full bg-indigo-600 text-white shadow-lg transform transition-all duration-300 z-50 ${
+                    showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+                }`}
+                aria-label="Volver arriba"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+            </button>
         </div>
     );
 };
