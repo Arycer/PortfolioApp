@@ -11,18 +11,16 @@ import { AuthProvider } from './context/AuthContext';
 import { ProfileProvider } from './context/ProfileContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import StarBackground from './components/StarBackground/StarBackground.tsx';
-import { useEffect } from 'react';
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
-    // Verificar que el componente se carga correctamente
-    useEffect(() => {
-        console.log("App component mounted");
-    }, []);
+
 
     return (
         <AuthProvider>
             <ProfileProvider>
                 <BrowserRouter>
+                    <Analytics />
                     <StarBackground />
                     <div className="min-h-screen flex flex-col relative">
                         <Header />
