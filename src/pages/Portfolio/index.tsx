@@ -211,7 +211,7 @@ const PortfolioPage: React.FC = () => {
             </section>
 
             {/* Sección de Contacto */}
-            {aboutMe && <ContactSection socialLinks={aboutMe.socialLinks} />}
+            {aboutMe && <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail} />}
 
             {selectedProject && (
                 <ProjectDetail

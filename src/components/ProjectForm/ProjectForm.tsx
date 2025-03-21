@@ -19,8 +19,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         description: '',
         image: '',
         link: '',
-        buttonText: ''
+        buttonText: '',
+        detailedDescription: '',
+        technologies: [],
+        githubUrl: ''
     });
+    
+    const [newTechnology, setNewTechnology] = useState('');
 
     useEffect(() => {
         if (project) {
@@ -32,6 +37,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
         setFormData(prev => ({...prev, [name]: value}));
+    };
+
+    const handleAddTechnology = () => {
+        if (newTechnology.trim()) {
+            setFormData(prev => ({
+                ...prev,
+                technologies: [...(prev.technologies || []), newTechnology.trim()]
+            }));
+            setNewTechnology('');
+        }
+    };
+
+    const handleRemoveTechnology = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            technologies: prev.technologies?.filter((_, i) => i !== index) || []
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -59,17 +81,71 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
             <div>
                 <label htmlFor="description" className="block text-sm font-medium text-slate-300">
-                    Descripción
+                    Descripción breve
                 </label>
                 <textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows={4}
+                    rows={2}
                     className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     required
                 />
+            </div>
+
+            <div>
+                <label htmlFor="detailedDescription" className="block text-sm font-medium text-slate-300">
+                    Descripción detallada
+                </label>
+                <textarea
+                    id="detailedDescription"
+                    name="detailedDescription"
+                    value={formData.detailedDescription || ''}
+                    onChange={handleChange}
+                    rows={6}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Tecnologías utilizadas
+                </label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                    {formData.technologies && formData.technologies.map((tech, index) => (
+                        <div 
+                            key={index} 
+                            className="flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-900/50 border border-indigo-700/50 text-indigo-200"
+                        >
+                            <span>{tech}</span>
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveTechnology(index)}
+                                className="text-indigo-400 hover:text-white"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={newTechnology}
+                        onChange={(e) => setNewTechnology(e.target.value)}
+                        className="flex-1 px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        placeholder="Añadir tecnología"
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTechnology())}
+                    />
+                    <button
+                        type="button"
+                        onClick={handleAddTechnology}
+                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600/50 hover:bg-indigo-600 rounded-lg transition-colors duration-150"
+                    >
+                        Añadir
+                    </button>
+                </div>
             </div>
 
             <div>
@@ -84,6 +160,21 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                     onChange={handleChange}
                     className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     required
+                />
+            </div>
+
+            <div>
+                <label htmlFor="githubUrl" className="block text-sm font-medium text-slate-300">
+                    URL del repositorio en GitHub (opcional)
+                </label>
+                <input
+                    type="url"
+                    id="githubUrl"
+                    name="githubUrl"
+                    value={formData.githubUrl || ''}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="https://github.com/usuario/proyecto"
                 />
             </div>
 

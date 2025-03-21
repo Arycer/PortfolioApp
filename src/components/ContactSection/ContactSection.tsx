@@ -4,9 +4,10 @@ import {getFunctions, httpsCallable} from 'firebase/functions';
 
 interface ContactSectionProps {
     socialLinks: SocialLink[];
+    contactEmail?: string;
 }
 
-const ContactSection: React.FC<ContactSectionProps> = ({socialLinks}) => {
+const ContactSection: React.FC<ContactSectionProps> = ({socialLinks, contactEmail}) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -158,11 +159,21 @@ const ContactSection: React.FC<ContactSectionProps> = ({socialLinks}) => {
                             <h3 className="text-xl font-semibold text-slate-200 mb-4">
                                 Información adicional
                             </h3>
-                            <p className="text-slate-400">
+                            <p className="text-slate-400 mb-4">
                                 También puedes contactarme directamente por correo electrónico o a través de mis redes
                                 sociales.
                                 Responderé lo antes posible.
                             </p>
+                            {contactEmail && (
+                                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <a href={`mailto:${contactEmail}`} className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                                        {contactEmail}
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

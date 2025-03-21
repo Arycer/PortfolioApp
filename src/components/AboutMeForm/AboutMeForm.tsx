@@ -17,7 +17,8 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
     const [formData, setFormData] = useState<Omit<AboutMeData, 'id'>>({
         greeting: '',
         description: '',
-        socialLinks: []
+        socialLinks: [],
+        contactEmail: ''
     });
 
     const [newSocialLink, setNewSocialLink] = useState<Omit<SocialLink, 'id'>>({
@@ -94,6 +95,21 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                     rows={4}
                     className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
                     required
+                />
+            </div>
+
+            <div>
+                <label htmlFor="contactEmail" className="block text-sm font-medium text-slate-300">
+                    Correo de Contacto
+                </label>
+                <input
+                    type="email"
+                    id="contactEmail"
+                    name="contactEmail"
+                    value={formData.contactEmail || ''}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    placeholder="tu@email.com"
                 />
             </div>
 

@@ -9,7 +9,6 @@ export interface Project {
     detailedDescription?: string;
     technologies?: string[];
     githubUrl?: string;
-    liveUrl?: string;
     order?: number;
     link?: string;
     buttonText?: string;

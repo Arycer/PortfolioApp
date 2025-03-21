@@ -12,6 +12,7 @@ export interface AboutMeData {
     greeting: string;
     description: string;
     socialLinks: SocialLink[];
+    contactEmail?: string;
 }
 
 interface AboutMeProps {
