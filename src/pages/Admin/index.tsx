@@ -746,23 +746,23 @@ const AdminPage: React.FC = () => {
                             {projects.map(project => (
                                 <div
                                     key={project.id}
-                                    className="relative group bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden"
+                                    className="relative group bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden h-[350px] flex flex-col"
                                 >
-                                    <div className="aspect-video">
+                                    <div className="h-48 bg-slate-900/50">
                                         <img
                                             src={project.image}
                                             alt={project.title}
                                             className="w-full h-full object-contain bg-slate-900/50"
                                         />
                                     </div>
-                                    <div className="p-4">
+                                    <div className="p-4 flex-1 flex flex-col">
                                         <h3 className="text-lg font-semibold text-slate-200 mb-2">
                                             {project.title}
                                         </h3>
-                                        <p className="text-sm text-slate-400 line-clamp-2 mb-4">
+                                        <p className="text-sm text-slate-400 line-clamp-2 mb-4 flex-grow">
                                             {project.description}
                                         </p>
-                                        <div className="flex justify-end space-x-3">
+                                        <div className="flex justify-end space-x-3 mt-auto">
                                             <button
                                                 onClick={() => {
                                                     setEditingProject(project);
