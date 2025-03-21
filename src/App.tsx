@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from "./components/Header/Header.tsx";
 import Footer from "./components/Footer/Footer.tsx";
 import './App.css';
@@ -8,7 +8,6 @@ import PortfolioPage from './pages/Portfolio';
 import AdminPage from './pages/Admin';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import { useAuth } from './context/AuthContext';
 
 function App() {
     return (
