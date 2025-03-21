@@ -507,11 +507,17 @@ const AdminPage: React.FC = () => {
                                 className="flex flex-col p-4 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50"
                             >
                                 <div className="flex items-center space-x-4 mb-4">
-                                    <img
-                                        src={skill.icon}
-                                        alt={skill.name}
-                                        className="w-8 h-8"
-                                    />
+                                    <div className="relative w-8 h-8">
+                                        <img
+                                            src={skill.icon}
+                                            alt={skill.name}
+                                            className="absolute top-0 left-0 w-full h-full"
+                                            style={{
+                                                objectFit: 'scale-down',
+                                                padding: '1px'
+                                            }}
+                                        />
+                                    </div>
                                     <h3 className="text-lg font-medium text-slate-200">
                                         {skill.name}
                                     </h3>

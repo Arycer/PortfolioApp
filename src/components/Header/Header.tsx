@@ -78,11 +78,7 @@ const Header: React.FC = () => {
             <TitleLink to="/">Arycer</TitleLink>
             {user && (
                 <ProfileContainer>
-                    <ProfileImage 
-                        src="/arycer.png" 
-                        alt="Logo Arycer" 
-                        onClick={handleProfileClick} 
-                    />
+                    <ProfileImage src="/arycer.png" alt="Logo Arycer" onClick={handleProfileClick} />
                     {showMenu && (
                         <DropdownMenu ref={menuRef}>
                             <DropdownItem onClick={handleGoToAdmin}>Panel Admin</DropdownItem>

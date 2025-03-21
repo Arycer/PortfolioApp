@@ -18,11 +18,17 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills }) => {
                     key={skill.id || skill.name}
                     className="flex flex-col items-center p-4 bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 transition-all duration-300 hover:border-slate-600/50 hover:shadow-lg hover:shadow-slate-900/20"
                 >
-                    <img
-                        src={skill.icon}
-                        alt={skill.name}
-                        className="w-12 h-12 mb-3"
-                    />
+                    <div className="relative w-12 h-12 mb-3">
+                        <img
+                            src={skill.icon}
+                            alt={skill.name}
+                            className="absolute top-0 left-0 w-full h-full"
+                            style={{
+                                objectFit: 'scale-down',
+                                padding: '2px'
+                            }}
+                        />
+                    </div>
                     <span className="text-sm font-medium text-slate-300 text-center">
                         {skill.name}
                     </span>
@@ -32,4 +38,4 @@ const SkillGrid: React.FC<SkillGridProps> = ({ skills }) => {
     );
 };
 
-export default SkillGrid; 
+export default SkillGrid;
