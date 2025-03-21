@@ -131,9 +131,9 @@ const ContactSection: React.FC<ContactSectionProps> = ({ socialLinks }) => {
                                 Sígueme en redes sociales
                             </h3>
                             <div className="flex flex-wrap gap-4">
-                                {socialLinks.map((link) => (
+                                {socialLinks.map((link, index) => (
                                     <a
-                                        key={link.id}
+                                        key={link.id || `contact-social-link-${index}`}
                                         href={link.url}
                                         target="_blank"
                                         rel="noopener noreferrer"

@@ -45,9 +45,9 @@ const AboutMe: React.FC<AboutMeProps> = ({ data }) => {
 
                 {/* Redes Sociales */}
                 <div className="flex flex-wrap justify-center gap-4">
-                    {data.socialLinks.map((link) => (
+                    {data.socialLinks.map((link, index) => (
                         <a
-                            key={link.id}
+                            key={link.id || `social-link-${index}`}
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
