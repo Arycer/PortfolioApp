@@ -14,6 +14,7 @@ import AboutMe from '../../components/AboutMe/AboutMe';
 import ContactSection from '../../components/ContactSection/ContactSection';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useLocation } from 'react-router-dom';
 
 const PortfolioPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -25,6 +26,7 @@ const PortfolioPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         // Inicializar AOS
@@ -141,6 +143,26 @@ const PortfolioPage: React.FC = () => {
         }
     }, [loading]);
 
+    // Efecto para manejar el scroll a secciones específicas cuando se carga la página con un hash
+    useEffect(() => {
+        // Si la URL tiene un hash
+        if (location.hash) {
+            // Quitar el # para obtener el ID de la sección
+            const sectionId = location.hash.slice(1);
+            const section = document.getElementById(sectionId);
+            
+            if (section) {
+                // Agregamos un pequeño retraso para asegurar que todas las secciones estén renderizadas
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: section.offsetTop - 80, // Ajuste para el header fijo
+                        behavior: 'smooth'
+                    });
+                }, 500);
+            }
+        }
+    }, [location.hash, loading]); // Dependemos de loading para asegurar que se haya cargado todo el contenido
+
     const handleProjectClick = (project: Project) => {
         setSelectedProject(project);
     };
@@ -171,13 +193,13 @@ const PortfolioPage: React.FC = () => {
         <div className="space-y-24 relative">
             {/* Sección About Me */}
             {aboutMe && (
-                <div data-aos="fade-down">
+                <div id="about" data-aos="fade-down">
                     <AboutMe data={aboutMe} />
                 </div>
             )}
 
             {/* Sección de Skills */}
-            <section data-aos="fade-up">
+            <section id="skills" data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
@@ -195,7 +217,7 @@ const PortfolioPage: React.FC = () => {
             </section>
 
             {/* Sección de Estudios */}
-            <section data-aos="fade-up">
+            <section id="education" data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
@@ -221,7 +243,7 @@ const PortfolioPage: React.FC = () => {
             </section>
 
             {/* Sección de Experiencia Laboral */}
-            <section data-aos="fade-up">
+            <section id="experience" data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
@@ -247,7 +269,7 @@ const PortfolioPage: React.FC = () => {
             </section>
 
             {/* Sección de Proyectos */}
-            <section data-aos="fade-up">
+            <section id="projects" data-aos="fade-up">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12" data-aos="zoom-in" data-aos-delay="100">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 mb-4">
@@ -272,7 +294,7 @@ const PortfolioPage: React.FC = () => {
 
             {/* Sección de Contacto */}
             {aboutMe && (
-                <div data-aos="fade-up" data-aos-offset="200">
+                <div id="contact" data-aos="fade-up" data-aos-offset="200">
                     <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail} />
                 </div>
             )}
