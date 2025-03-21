@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Header from "./components/Header/Header.tsx";
 import Footer from "./components/Footer/Footer.tsx";
 import './App.css';
@@ -7,12 +7,13 @@ import LoginPage from './pages/Login';
 import PortfolioPage from './pages/Portfolio';
 import AdminPage from './pages/Admin';
 import ImageManager from './pages/ImageManager';
-import { AuthProvider } from './context/AuthContext';
-import { ProfileProvider } from './context/ProfileContext';
+import StyleGuide from './pages/StyleGuide';
+import {AuthProvider} from './context/AuthContext';
+import {ProfileProvider} from './context/ProfileContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import StarBackground from './components/StarBackground/StarBackground.tsx';
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import {Analytics} from "@vercel/analytics/react"
+import {SpeedInsights} from "@vercel/speed-insights/react"
 
 function App() {
 
@@ -21,34 +22,42 @@ function App() {
         <AuthProvider>
             <ProfileProvider>
                 <BrowserRouter>
-                    <Analytics />
-                    <SpeedInsights />
-                    <StarBackground />
+                    <Analytics/>
+                    <SpeedInsights/>
+                    <StarBackground/>
                     <div className="min-h-screen flex flex-col relative">
-                        <Header />
+                        <Header/>
                         <main className="flex-1 py-12 w-full">
                             <Routes>
-                                <Route path="/login" element={<LoginPage />} />
-                                <Route 
-                                    path="/admin" 
+                                <Route path="/login" element={<LoginPage/>}/>
+                                <Route
+                                    path="/admin"
                                     element={
                                         <ProtectedRoute>
-                                            <AdminPage />
+                                            <AdminPage/>
                                         </ProtectedRoute>
-                                    } 
+                                    }
                                 />
-                                <Route 
-                                    path="/admin/images" 
+                                <Route
+                                    path="/admin/images"
                                     element={
                                         <ProtectedRoute>
-                                            <ImageManager />
+                                            <ImageManager/>
                                         </ProtectedRoute>
-                                    } 
+                                    }
                                 />
-                                <Route path="/" element={<PortfolioPage />} />
+                                <Route
+                                    path="/styleguide"
+                                    element={
+                                        <ProtectedRoute>
+                                            <StyleGuide/>
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route path="/" element={<PortfolioPage/>}/>
                             </Routes>
                         </main>
-                        <Footer />
+                        <Footer/>
                     </div>
                 </BrowserRouter>
             </ProfileProvider>

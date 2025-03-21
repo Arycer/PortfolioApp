@@ -1,12 +1,12 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { 
+import {createContext, useContext, useEffect, useState} from 'react';
+import {
     User,
     signInWithEmailAndPassword,
     signOut as firebaseSignOut,
     onAuthStateChanged
 } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { AuthContextType, AuthProviderProps } from '../types';
+import {auth} from '../config/firebase';
+import {AuthContextType, AuthProviderProps} from '../types';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -18,7 +18,7 @@ export const useAuth = () => {
     return context;
 };
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({children}: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 

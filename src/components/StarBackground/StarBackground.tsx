@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Star, ShootingStar } from '../../types';
+import React, {useEffect, useRef} from 'react';
+import {Star, ShootingStar} from '../../types';
 
 const StarBackground: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -12,7 +12,7 @@ const StarBackground: React.FC = () => {
     // Función para registrar un mensaje en la consola
     useEffect(() => {
         console.log("StarBackground component mounted");
-        
+
         const canvas = canvasRef.current;
         if (!canvas) {
             console.error("Canvas element not found");
@@ -43,7 +43,7 @@ const StarBackground: React.FC = () => {
                 // Distribución más natural con más estrellas pequeñas
                 const sizeRand = Math.random();
                 let size;
-                
+
                 if (sizeRand < 0.85) {
                     // 85% de estrellas pequeñas
                     size = Math.random() * 0.8 + 0.2;
@@ -54,7 +54,7 @@ const StarBackground: React.FC = () => {
                     // 3% de estrellas grandes
                     size = Math.random() * 1.0 + 1.5;
                 }
-                
+
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
@@ -90,16 +90,16 @@ const StarBackground: React.FC = () => {
             // Asegurarse de que el canvas tenga el tamaño correcto de la ventana
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
+
             console.log("New canvas dimensions:", canvas.width, "x", canvas.height);
-            
+
             // Ajustar número de estrellas según tamaño de pantalla y densidad de píxeles
             const pixelRatio = window.devicePixelRatio || 1;
             const starCount = Math.min(
                 Math.floor((canvas.width * canvas.height) / (pixelRatio <= 1 ? 5000 : 7000)),
                 1500 // Máximo de estrellas para evitar problemas de rendimiento
             );
-            
+
             starsRef.current = createStars(starCount);
             shootingStarsRef.current = [];
         };
@@ -113,16 +113,16 @@ const StarBackground: React.FC = () => {
             if (!lastTimeRef.current) lastTimeRef.current = timestamp;
             const deltaTime = timestamp - lastTimeRef.current;
             lastTimeRef.current = timestamp;
-            
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Actualizar temporizador de estrellas fugaces
             shootingStarTimerRef.current += deltaTime;
             if (shootingStarTimerRef.current > 4000 && Math.random() < 0.1) { // Aproximadamente cada 4 segundos con 10% de probabilidad
                 shootingStarsRef.current.push(createShootingStar());
                 shootingStarTimerRef.current = 0;
             }
-            
+
             // Dibujar estrellas normales
             starsRef.current.forEach(star => {
                 // Actualizar posición con un movimiento muy lento (efecto de paralaje)
@@ -160,7 +160,7 @@ const StarBackground: React.FC = () => {
                     const colorBase = star.color.replace('rgb', 'rgba').replace(')', ', ');
                     glow.addColorStop(0, `${colorBase}${star.opacity * 0.7})`);
                     glow.addColorStop(1, `${colorBase}0)`);
-                    
+
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, star.size * 4, 0, Math.PI * 2);
                     ctx.fillStyle = glow;
@@ -171,15 +171,15 @@ const StarBackground: React.FC = () => {
             // Actualizar y dibujar estrellas fugaces
             shootingStarsRef.current = shootingStarsRef.current.filter(shootingStar => {
                 shootingStar.life += deltaTime / 16;
-                
+
                 if (shootingStar.life > shootingStar.maxLife) {
                     return false;
                 }
-                
+
                 // Calcular opacidad basada en la vida
                 const lifeRatio = shootingStar.life / shootingStar.maxLife;
                 let opacity;
-                
+
                 if (lifeRatio < 0.2) {
                     // Fade in
                     opacity = lifeRatio * 5;
@@ -189,34 +189,34 @@ const StarBackground: React.FC = () => {
                 } else {
                     opacity = 1;
                 }
-                
+
                 shootingStar.opacity = opacity;
-                
+
                 // Actualizar posición
                 shootingStar.x += Math.cos(shootingStar.angle) * shootingStar.speed;
                 shootingStar.y += Math.sin(shootingStar.angle) * shootingStar.speed;
-                
+
                 // Dibujar estela
                 ctx.beginPath();
                 ctx.moveTo(shootingStar.x, shootingStar.y);
-                
+
                 const tailX = shootingStar.x - Math.cos(shootingStar.angle) * shootingStar.length;
                 const tailY = shootingStar.y - Math.sin(shootingStar.angle) * shootingStar.length;
-                
+
                 ctx.lineTo(tailX, tailY);
-                
+
                 const gradient = ctx.createLinearGradient(
                     shootingStar.x, shootingStar.y,
                     tailX, tailY
                 );
-                
+
                 gradient.addColorStop(0, `rgba(255, 255, 255, ${shootingStar.opacity})`);
                 gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                
+
                 ctx.strokeStyle = gradient;
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
-                
+
                 return true;
             });
 
@@ -238,10 +238,10 @@ const StarBackground: React.FC = () => {
     console.log("Rendering StarBackground component");
 
     return (
-        <canvas 
+        <canvas
             ref={canvasRef}
             className="fixed top-0 left-0 w-full h-full pointer-events-none"
-            style={{ 
+            style={{
                 backgroundColor: 'transparent',
                 zIndex: 0,
                 opacity: 1

@@ -1,6 +1,6 @@
 import React from 'react';
 import LinkButton from '../LinkButton/LinkButton';
-import { Project } from '../../types';
+import {Project} from '../../types';
 
 interface ProjectCardProps {
     project: Project;

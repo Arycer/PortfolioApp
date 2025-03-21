@@ -116,9 +116,14 @@ const Header: React.FC = () => {
         setShowMenu(false);
     };
 
+    const handleGoToStyleGuide = () => {
+        navigate('/styleguide');
+        setShowMenu(false);
+    };
+
     const handleNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, sectionId: string) => {
         e.preventDefault();
-        
+
         // Solo navegar con smooth scroll si estamos en la página principal
         if (location.pathname === '/') {
             const section = document.getElementById(sectionId);
@@ -132,17 +137,17 @@ const Header: React.FC = () => {
             // Si estamos en otra página, navegar a la página principal + anchor
             navigate(`/#${sectionId}`);
         }
-        
+
         setShowMobileMenu(false);
     };
 
     const navLinks = [
-        { title: 'Sobre Mí', id: 'about' },
-        { title: 'Habilidades', id: 'skills' },
-        { title: 'Formación', id: 'education' },
-        { title: 'Experiencia', id: 'experience' },
-        { title: 'Proyectos', id: 'projects' },
-        { title: 'Contacto', id: 'contact' }
+        {title: 'Sobre Mí', id: 'about'},
+        {title: 'Habilidades', id: 'skills'},
+        {title: 'Formación', id: 'education'},
+        {title: 'Experiencia', id: 'experience'},
+        {title: 'Proyectos', id: 'projects'},
+        {title: 'Contacto', id: 'contact'}
     ];
 
     return (
@@ -151,26 +156,30 @@ const Header: React.FC = () => {
                 <TitleLink to="/">
                     {profileData?.username || 'Arycer'}
                 </TitleLink>
-                
+
                 {/* Botón móvil */}
                 <MobileMenuButton onClick={toggleMobileMenu} className="ml-4">
                     {showMobileMenu ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
                     )}
                 </MobileMenuButton>
             </div>
-            
+
             {/* Navegación Desktop */}
             <NavContainer>
                 {navLinks.map(link => (
-                    <NavLink 
-                        key={link.id} 
+                    <NavLink
+                        key={link.id}
                         href={`#${link.id}`}
                         onClick={(e) => handleNavLinkClick(e, link.id)}
                     >
@@ -182,28 +191,29 @@ const Header: React.FC = () => {
             <div className="flex items-center">
                 {user && (
                     <ProfileContainer>
-                        <ProfileImage 
-                            src={profileData?.profileImage || "/arycer.png"} 
-                            alt={`${profileData?.username || 'Usuario'} Logo`} 
+                        <ProfileImage
+                            src={profileData?.profileImage || "/arycer.png"}
+                            alt={`${profileData?.username || 'Usuario'} Logo`}
                             onClick={handleProfileClick}
                         />
                         {showMenu && (
                             <DropdownMenu ref={menuRef}>
                                 <DropdownItem onClick={handleGoToAdmin}>Panel Admin</DropdownItem>
                                 <DropdownItem onClick={handleGoToImageManager}>Gestor de Imágenes</DropdownItem>
+                                <DropdownItem onClick={handleGoToStyleGuide}>Guía de Estilos</DropdownItem>
                                 <DropdownItem onClick={handleLogout}>Cerrar Sesión</DropdownItem>
                             </DropdownMenu>
                         )}
                     </ProfileContainer>
                 )}
             </div>
-            
+
             {/* Menú móvil */}
             {showMobileMenu && (
                 <MobileMenu ref={mobileMenuRef}>
                     {navLinks.map(link => (
-                        <MobileNavLink 
-                            key={link.id} 
+                        <MobileNavLink
+                            key={link.id}
                             href={`#${link.id}`}
                             onClick={(e) => handleNavLinkClick(e, link.id)}
                         >

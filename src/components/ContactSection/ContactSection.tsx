@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import { SocialLink } from '../../types';
-import {getFunctions, httpsCallable} from 'firebase/functions';
+import {SocialLink} from '../../types';
+import {sendContactMessage} from '../../services/mailService';
+import {Input, Textarea, Button, Alert} from '../ui/StyledComponents';
 
 interface ContactSectionProps {
     socialLinks: SocialLink[];
@@ -8,34 +9,29 @@ interface ContactSectionProps {
 }
 
 const ContactSection: React.FC<ContactSectionProps> = ({socialLinks, contactEmail}) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const {name, value} = e.target;
-        setFormData(prev => ({...prev, [name]: value}));
-    };
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setSubmitStatus('idle');
+        setErrorMessage('');
 
         try {
-            const functions = getFunctions();
-            const sendEmail = httpsCallable(functions, 'sendEmail');
-
-            await sendEmail(formData);
-
+            await sendContactMessage(name, email, message);
             setSubmitStatus('success');
-            setFormData({name: '', email: '', message: ''});
+            setName('');
+            setEmail('');
+            setMessage('');
         } catch (error) {
-            console.error('Error sending email:', error);
+            console.error('Error sending message:', error);
             setSubmitStatus('error');
+            setErrorMessage('Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.');
         } finally {
             setIsSubmitting(false);
             setTimeout(() => setSubmitStatus('idle'), 3000);
@@ -58,71 +54,54 @@ const ContactSection: React.FC<ContactSectionProps> = ({socialLinks, contactEmai
                     {/* Formulario de contacto */}
                     <div className="bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                                    Nombre
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    placeholder="Tu nombre"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                    placeholder="tu@email.com"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
-                                    Mensaje
-                                </label>
-                                <textarea
-                                    id="message"
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    required
-                                    rows={4}
-                                    className="w-full px-4 py-2 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                                    placeholder="Tu mensaje..."
-                                />
-                            </div>
-                            <button
+                            <Input
+                                id="name"
+                                label="Nombre"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Tu nombre"
+                                required
+                            />
+
+                            <Input
+                                id="email"
+                                type="email"
+                                label="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="tu@email.com"
+                                required
+                            />
+
+                            <Textarea
+                                id="message"
+                                label="Mensaje"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder="Tu mensaje..."
+                                required
+                                rows={4}
+                            />
+
+                            <Button
                                 type="submit"
+                                isLoading={isSubmitting}
                                 disabled={isSubmitting}
-                                className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full"
                             >
-                                {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
-                            </button>
+                                Enviar mensaje
+                            </Button>
 
                             {submitStatus === 'success' && (
-                                <div
-                                    className="p-4 text-sm text-emerald-400 bg-emerald-900/50 rounded-lg border border-emerald-800/50">
+                                <Alert variant="success">
                                     Mensaje enviado correctamente.
-                                </div>
+                                </Alert>
                             )}
 
                             {submitStatus === 'error' && (
-                                <div
-                                    className="p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
-                                    Error al enviar el mensaje. Por favor, intenta de nuevo.
-                                </div>
+                                <Alert variant="error">
+                                    {errorMessage}
+                                </Alert>
                             )}
                         </form>
                     </div>
@@ -165,11 +144,15 @@ const ContactSection: React.FC<ContactSectionProps> = ({socialLinks, contactEmai
                                 Responderé lo antes posible.
                             </p>
                             {contactEmail && (
-                                <div className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                <div
+                                    className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                     </svg>
-                                    <a href={`mailto:${contactEmail}`} className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                                    <a href={`mailto:${contactEmail}`}
+                                       className="text-indigo-400 hover:text-indigo-300 transition-colors">
                                         {contactEmail}
                                     </a>
                                 </div>

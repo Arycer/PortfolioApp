@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skill } from '../../types';
+import {Skill} from '../../types';
 
 interface SkillGridProps {
     skills: Skill[];

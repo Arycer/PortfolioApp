@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import React, {useEffect, useState} from 'react';
+import {collection, getDocs} from 'firebase/firestore';
+import {db} from '../../config/firebase';
 import ProjectGrid from '../../components/ProjectGrid/ProjectGrid';
 import ProjectDetail from '../../components/ProjectDetail/ProjectDetail';
-import { Project } from '../../types';
+import {Project} from '../../types';
 
 const ProjectsPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -20,7 +20,7 @@ const ProjectsPage: React.FC = () => {
                     id: doc.id,
                     ...doc.data()
                 })) as Project[];
-                
+
                 setProjects(projectsList);
                 setError(null);
             } catch (err) {
@@ -46,7 +46,8 @@ const ProjectsPage: React.FC = () => {
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]" />
+                    <div
+                        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]"/>
                     <p className="mt-4 text-slate-400">Cargando...</p>
                 </div>
             </div>
@@ -61,7 +62,8 @@ const ProjectsPage: React.FC = () => {
                         Mis Proyectos
                     </h1>
                     <p className="text-slate-400 max-w-2xl mx-auto">
-                        Explora mi portafolio de proyectos, donde cada creación refleja mi pasión por el desarrollo y la innovación.
+                        Explora mi portafolio de proyectos, donde cada creación refleja mi pasión por el desarrollo y la
+                        innovación.
                     </p>
                 </div>
 
@@ -71,7 +73,7 @@ const ProjectsPage: React.FC = () => {
                     </div>
                 )}
 
-                <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
+                <ProjectGrid projects={projects} onProjectClick={handleProjectClick}/>
             </div>
 
             {selectedProject && (

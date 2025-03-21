@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import React, {useEffect, useState} from 'react';
+import {collection, getDocs} from 'firebase/firestore';
+import {db} from '../../config/firebase';
 import ProjectGrid from '../../components/ProjectGrid/ProjectGrid';
 import ProjectDetail from '../../components/ProjectDetail/ProjectDetail';
 import SkillGrid from '../../components/SkillGrid/SkillGrid';
-import { Project, Skill, Study, Job, AboutMeData } from '../../types';
+import {Project, Skill, Study, Job, AboutMeData} from '../../types';
 import StudyCard from '../../components/StudyCard/StudyCard';
 import JobCard from '../../components/JobCard/JobCard';
 import AboutMe from '../../components/AboutMe/AboutMe';
 import ContactSection from '../../components/ContactSection/ContactSection';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useLocation } from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 
 const PortfolioPage: React.FC = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -38,9 +38,9 @@ const PortfolioPage: React.FC = () => {
         const fetchData = async () => {
             try {
                 const [
-                    projectsSnapshot, 
-                    skillsSnapshot, 
-                    studiesSnapshot, 
+                    projectsSnapshot,
+                    skillsSnapshot,
+                    studiesSnapshot,
                     jobsSnapshot,
                     aboutMeSnapshot
                 ] = await Promise.all([
@@ -147,7 +147,7 @@ const PortfolioPage: React.FC = () => {
             // Quitar el # para obtener el ID de la sección
             const sectionId = location.hash.slice(1);
             const section = document.getElementById(sectionId);
-            
+
             if (section) {
                 // Agregamos un pequeño retraso para asegurar que todas las secciones estén renderizadas
                 setTimeout(() => {
@@ -179,7 +179,8 @@ const PortfolioPage: React.FC = () => {
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]" />
+                    <div
+                        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]"/>
                     <p className="mt-4 text-slate-400">Cargando...</p>
                 </div>
             </div>
@@ -191,7 +192,7 @@ const PortfolioPage: React.FC = () => {
             {/* Sección About Me */}
             {aboutMe && (
                 <div id="about" data-aos="fade-down">
-                    <AboutMe data={aboutMe} />
+                    <AboutMe data={aboutMe}/>
                 </div>
             )}
 
@@ -208,7 +209,7 @@ const PortfolioPage: React.FC = () => {
                     </div>
 
                     <div data-aos="fade-up" data-aos-delay="200">
-                        <SkillGrid skills={skills} />
+                        <SkillGrid skills={skills}/>
                     </div>
                 </div>
             </section>
@@ -227,12 +228,12 @@ const PortfolioPage: React.FC = () => {
 
                     <div className="space-y-6">
                         {studies.map((study, index) => (
-                            <div 
-                                key={study.id} 
-                                data-aos="fade-right" 
+                            <div
+                                key={study.id}
+                                data-aos="fade-right"
                                 data-aos-delay={100 + (index * 50)}
                             >
-                                <StudyCard study={study} />
+                                <StudyCard study={study}/>
                             </div>
                         ))}
                     </div>
@@ -253,12 +254,12 @@ const PortfolioPage: React.FC = () => {
 
                     <div className="space-y-8">
                         {jobs.map((job, index) => (
-                            <div 
-                                key={job.id} 
-                                data-aos="fade-left" 
+                            <div
+                                key={job.id}
+                                data-aos="fade-left"
                                 data-aos-delay={100 + (index * 50)}
                             >
-                                <JobCard job={job} />
+                                <JobCard job={job}/>
                             </div>
                         ))}
                     </div>
@@ -278,13 +279,14 @@ const PortfolioPage: React.FC = () => {
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
+                        <div
+                            className="mb-6 p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
                             {error}
                         </div>
                     )}
 
                     <div data-aos="fade-up" data-aos-delay="200">
-                        <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
+                        <ProjectGrid projects={projects} onProjectClick={handleProjectClick}/>
                     </div>
                 </div>
             </section>
@@ -292,7 +294,7 @@ const PortfolioPage: React.FC = () => {
             {/* Sección de Contacto */}
             {aboutMe && (
                 <div id="contact" data-aos="fade-up" data-aos-offset="200">
-                    <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail} />
+                    <ContactSection socialLinks={aboutMe.socialLinks} contactEmail={aboutMe.contactEmail}/>
                 </div>
             )}
 
@@ -305,15 +307,16 @@ const PortfolioPage: React.FC = () => {
             )}
 
             {/* Botón de scroll to top */}
-            <button 
+            <button
                 onClick={scrollToTop}
                 className={`fixed right-6 bottom-6 p-3 rounded-full bg-indigo-600 text-white shadow-lg transform transition-all duration-300 z-50 ${
                     showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
                 }`}
                 aria-label="Volver arriba"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18"/>
                 </svg>
             </button>
         </div>

@@ -1,5 +1,5 @@
-import { User } from 'firebase/auth';
-import { ReactNode } from 'react';
+import {User} from 'firebase/auth';
+import {ReactNode} from 'react';
 
 // Skill types
 export interface Skill {

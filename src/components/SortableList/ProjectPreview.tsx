@@ -1,5 +1,5 @@
 import React from 'react';
-import { Project } from '../../types';
+import {Project} from '../../types';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 

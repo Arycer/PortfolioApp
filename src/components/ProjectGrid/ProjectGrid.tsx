@@ -1,6 +1,6 @@
 import React from 'react';
 import ProjectCard from '../ProjectCard/ProjectCard';
-import { Project } from '../../types';
+import {Project} from '../../types';
 
 interface ProjectGridProps {
     projects: Project[];
@@ -12,9 +12,9 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({projects, onProjectClick}) => 
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project, index) => (
-                    <div 
+                    <div
                         key={project.id || project.title}
-                        data-aos="zoom-in-up" 
+                        data-aos="zoom-in-up"
                         data-aos-delay={100 + (index * 50)}
                         data-aos-duration="600"
                     >

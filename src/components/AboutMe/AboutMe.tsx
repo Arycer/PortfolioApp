@@ -1,5 +1,5 @@
 import React from 'react';
-import { AboutMeData } from '../../types';
+import {AboutMeData} from '../../types';
 
 interface AboutMeProps {
     data: AboutMeData;
@@ -24,14 +24,18 @@ const AboutMe: React.FC<AboutMeProps> = ({data}) => {
                 <div className="w-full md:w-1/3 flex justify-center">
                     <div className="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
                         {/* Efectos de fondo con gradientes y blur */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/15 to-purple-500/15 rounded-full blur-3xl scale-110"></div>
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full blur-2xl scale-125"></div>
-                        
+                        <div
+                            className="absolute inset-0 bg-gradient-to-b from-indigo-500/15 to-purple-500/15 rounded-full blur-3xl scale-110"></div>
+                        <div
+                            className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full blur-2xl scale-125"></div>
+
                         {/* Círculo con borde difuminado */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-indigo-500/20 blur-xl transform scale-105"></div>
-                        
+                        <div
+                            className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-indigo-500/20 blur-xl transform scale-105"></div>
+
                         {/* Contenedor de la imagen con máscara circular */}
-                        <div className="absolute inset-0 overflow-hidden rounded-full border-4 border-slate-800/30 shadow-lg shadow-indigo-500/10">
+                        <div
+                            className="absolute inset-0 overflow-hidden rounded-full border-4 border-slate-800/30 shadow-lg shadow-indigo-500/10">
                             <div className="absolute inset-0">
                                 <img
                                     src={data.profileImage || "/arycer.png"}
@@ -40,9 +44,10 @@ const AboutMe: React.FC<AboutMeProps> = ({data}) => {
                                 />
                             </div>
                             {/* Overlay luminoso */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 via-transparent to-purple-500/10"></div>
+                            <div
+                                className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 via-transparent to-purple-500/10"></div>
                         </div>
-                        
+
                         {/* Brillo en los bordes */}
                         <div className="absolute inset-0 rounded-full border border-indigo-500/30 blur-sm"></div>
                     </div>
@@ -59,7 +64,7 @@ const AboutMe: React.FC<AboutMeProps> = ({data}) => {
                     <p className="text-lg text-slate-400 mb-6 leading-relaxed">
                         {data.description}
                     </p>
-                    
+
                     {/* Redes Sociales - Ahora justo debajo del texto */}
                     {sortedSocialLinks.length > 0 && (
                         <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-2">

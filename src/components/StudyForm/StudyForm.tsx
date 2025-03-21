@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { Study, ImageInfo } from '../../types';
+import {Study, ImageInfo} from '../../types';
 import Modal from '../Modal/Modal';
-import { getImages } from '../../services/storageService';
+import {getImages} from '../../services/storageService';
 
 interface StudyFormProps {
     study?: Study;
@@ -41,11 +41,11 @@ const StudyForm: React.FC<StudyFormProps> = ({
     const loadImages = async () => {
         setIsLoadingImages(true);
         setImageError(null);
-        
+
         try {
             const imagesList = await getImages('images'); // Usar la carpeta general de imágenes
             // Ordenar por fecha más reciente primero
-            imagesList.sort((a, b) => 
+            imagesList.sort((a, b) =>
                 b.createdAt.getTime() - a.createdAt.getTime()
             );
             setImages(imagesList);
@@ -78,7 +78,7 @@ const StudyForm: React.FC<StudyFormProps> = ({
     };
 
     // Filtrar imágenes por término de búsqueda
-    const filteredImages = images.filter(image => 
+    const filteredImages = images.filter(image =>
         image.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -169,7 +169,8 @@ const StudyForm: React.FC<StudyFormProps> = ({
                     </label>
                     <div className="flex items-center space-x-4">
                         {formData.logo && (
-                            <div className="w-16 h-16 bg-slate-800/50 rounded-lg overflow-hidden flex items-center justify-center">
+                            <div
+                                className="w-16 h-16 bg-slate-800/50 rounded-lg overflow-hidden flex items-center justify-center">
                                 <img
                                     src={formData.logo}
                                     alt="Logo preview"
@@ -261,7 +262,8 @@ const StudyForm: React.FC<StudyFormProps> = ({
                     </div>
 
                     {imageError && (
-                        <div className="bg-red-600/20 border border-red-600/40 text-red-400 px-4 py-3 rounded-lg flex items-center">
+                        <div
+                            className="bg-red-600/20 border border-red-600/40 text-red-400 px-4 py-3 rounded-lg flex items-center">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-5 w-5 mr-2"
@@ -283,8 +285,8 @@ const StudyForm: React.FC<StudyFormProps> = ({
                     {isLoadingImages ? (
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                             {[...Array(6)].map((_, index) => (
-                                <div 
-                                    key={index} 
+                                <div
+                                    key={index}
                                     className="bg-slate-800/30 border border-slate-700/40 rounded-lg overflow-hidden shadow-md animate-pulse h-40"
                                 >
                                     <div className="h-32 bg-slate-700/50"></div>

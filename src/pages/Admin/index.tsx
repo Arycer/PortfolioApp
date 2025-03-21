@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch } from 'firebase/firestore';
-import { db } from '../../config/firebase';
-import { Project, Skill, Study, Job, AboutMeData } from '../../types';
+import React, {useEffect, useState} from 'react';
+import {collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, writeBatch} from 'firebase/firestore';
+import {db} from '../../config/firebase';
+import {Project, Skill, Study, Job, AboutMeData} from '../../types';
 import ProjectForm from '../../components/ProjectForm/ProjectForm';
 import SkillForm from '../../components/SkillForm/SkillForm';
 import StudyForm from '../../components/StudyForm/StudyForm';
@@ -33,7 +33,7 @@ const AdminPage: React.FC = () => {
     const [showJobForm, setShowJobForm] = useState(false);
     const [showAboutMeForm, setShowAboutMeForm] = useState(false);
     const [aboutMe, setAboutMe] = useState<AboutMeData | null>(null);
-    
+
     // Nuevos estados para controlar la vista de listas ordenables
     const [projectsViewMode, setProjectsViewMode] = useState<'grid' | 'list'>('grid');
     const [skillsViewMode, setSkillsViewMode] = useState<'grid' | 'list'>('grid');
@@ -42,9 +42,9 @@ const AdminPage: React.FC = () => {
     const fetchData = async () => {
         try {
             const [
-                projectsSnapshot, 
-                skillsSnapshot, 
-                studiesSnapshot, 
+                projectsSnapshot,
+                skillsSnapshot,
+                studiesSnapshot,
                 jobsSnapshot,
                 aboutMeSnapshot
             ] = await Promise.all([
@@ -60,16 +60,16 @@ const AdminPage: React.FC = () => {
                 order: doc.data().order || 0, // Asegurarnos de tener una propiedad order
                 ...doc.data()
             })) as Project[];
-            
+
             // Ordenar proyectos por la propiedad order
             projectsList.sort((a, b) => (a.order || 0) - (b.order || 0));
-            
+
             const skillsList = skillsSnapshot.docs.map(doc => ({
                 id: doc.id,
                 order: doc.data().order || 0, // Asegurarnos de tener una propiedad order
                 ...doc.data()
             })) as Skill[];
-            
+
             // Ordenar habilidades por la propiedad order
             skillsList.sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -131,11 +131,11 @@ const AdminPage: React.FC = () => {
 
             // Primero creamos la colección si no existe
             const aboutMeCollection = collection(db, 'aboutMe');
-            
+
             // Luego creamos el documento con ID específico
             const aboutMeRef = doc(aboutMeCollection, 'main');
             await setDoc(aboutMeRef, initialData);
-            
+
             await fetchData();
             setError(null);
         } catch (err) {
@@ -162,7 +162,7 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateJob = async (jobData: Omit<Job, 'id'>) => {
         if (!editingJob?.id) return;
-        
+
         setIsSubmitting(true);
         try {
             const jobRef = doc(db, 'jobs', editingJob.id);
@@ -212,7 +212,7 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateStudy = async (studyData: Omit<Study, 'id'>) => {
         if (!editingStudy?.id) return;
-        
+
         setIsSubmitting(true);
         try {
             const studyRef = doc(db, 'studies', editingStudy.id);
@@ -262,7 +262,7 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateProject = async (projectData: Omit<Project, 'id'>) => {
         if (!editingProject?.id) return;
-        
+
         setIsSubmitting(true);
         try {
             const projectRef = doc(db, 'projects', editingProject.id);
@@ -312,7 +312,7 @@ const AdminPage: React.FC = () => {
 
     const handleUpdateSkill = async (skillData: Omit<Skill, 'id'>) => {
         if (!editingSkill?.id) return;
-        
+
         setIsSubmitting(true);
         try {
             const skillRef = doc(db, 'skills', editingSkill.id);
@@ -371,19 +371,19 @@ const AdminPage: React.FC = () => {
     // Función para actualizar el orden de los proyectos
     const handleProjectsReorder = async (reorderedProjects: Project[]) => {
         setProjects(reorderedProjects);
-        
+
         try {
             setIsOrderUpdating(true);
             const batch = writeBatch(db);
-            
+
             // Actualizar el orden de cada proyecto
             reorderedProjects.forEach((project, index) => {
                 if (project.id) {
                     const projectRef = doc(db, 'projects', project.id);
-                    batch.update(projectRef, { order: index });
+                    batch.update(projectRef, {order: index});
                 }
             });
-            
+
             await batch.commit();
             setError(null);
         } catch (err) {
@@ -394,23 +394,23 @@ const AdminPage: React.FC = () => {
             setIsOrderUpdating(false);
         }
     };
-    
+
     // Función para actualizar el orden de las habilidades
     const handleSkillsReorder = async (reorderedSkills: Skill[]) => {
         setSkills(reorderedSkills);
-        
+
         try {
             setIsOrderUpdating(true);
             const batch = writeBatch(db);
-            
+
             // Actualizar el orden de cada habilidad
             reorderedSkills.forEach((skill, index) => {
                 if (skill.id) {
                     const skillRef = doc(db, 'skills', skill.id);
-                    batch.update(skillRef, { order: index });
+                    batch.update(skillRef, {order: index});
                 }
             });
-            
+
             await batch.commit();
             setError(null);
         } catch (err) {
@@ -426,7 +426,8 @@ const AdminPage: React.FC = () => {
         return (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]" />
+                    <div
+                        className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent align-[-0.125em]"/>
                     <p className="mt-4 text-slate-400">Cargando...</p>
                 </div>
             </div>
@@ -468,7 +469,7 @@ const AdminPage: React.FC = () => {
 
                     {aboutMe && (
                         <div className="relative">
-                            <AboutMe data={aboutMe} />
+                            <AboutMe data={aboutMe}/>
                         </div>
                     )}
                 </section>
@@ -493,7 +494,7 @@ const AdminPage: React.FC = () => {
                                 key={job.id}
                                 className="relative"
                             >
-                                <JobCard job={job} />
+                                <JobCard job={job}/>
                                 <div className="absolute top-4 right-4 flex space-x-3">
                                     <button
                                         onClick={() => {
@@ -536,7 +537,7 @@ const AdminPage: React.FC = () => {
                                 key={study.id}
                                 className="relative bg-slate-800/30 backdrop-blur-lg rounded-xl border border-slate-700/50 overflow-hidden"
                             >
-                                <StudyCard study={study} />
+                                <StudyCard study={study}/>
                                 <div className="absolute top-4 right-4 flex space-x-3">
                                     <button
                                         onClick={() => {
@@ -570,25 +571,29 @@ const AdminPage: React.FC = () => {
                                 <button
                                     onClick={() => setSkillsViewMode('grid')}
                                     className={`px-3 py-2 text-sm font-medium transition-colors ${
-                                        skillsViewMode === 'grid' 
-                                            ? 'bg-indigo-600 text-white' 
+                                        skillsViewMode === 'grid'
+                                            ? 'bg-indigo-600 text-white'
                                             : 'text-slate-300 hover:text-white'
                                     }`}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                                     </svg>
                                 </button>
                                 <button
                                     onClick={() => setSkillsViewMode('list')}
                                     className={`px-3 py-2 text-sm font-medium transition-colors ${
-                                        skillsViewMode === 'list' 
-                                            ? 'bg-indigo-600 text-white' 
+                                        skillsViewMode === 'list'
+                                            ? 'bg-indigo-600 text-white'
                                             : 'text-slate-300 hover:text-white'
                                     }`}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M4 6h16M4 12h16M4 18h16"/>
                                     </svg>
                                 </button>
                             </div>
@@ -602,10 +607,14 @@ const AdminPage: React.FC = () => {
                     </div>
 
                     {isOrderUpdating && (
-                        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
-                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <div
+                            className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
+                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             Actualizando orden...
                         </div>
@@ -656,7 +665,8 @@ const AdminPage: React.FC = () => {
                         </div>
                     ) : (
                         <div className="bg-slate-800/20 backdrop-blur-sm rounded-xl border border-slate-700/50 p-4">
-                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar las habilidades. El nuevo orden se guardará automáticamente.</p>
+                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar las habilidades.
+                                El nuevo orden se guardará automáticamente.</p>
                             <SortableList
                                 items={skills}
                                 itemKey={(skill) => skill.id || skill.name}
@@ -690,25 +700,29 @@ const AdminPage: React.FC = () => {
                                 <button
                                     onClick={() => setProjectsViewMode('grid')}
                                     className={`px-3 py-2 text-sm font-medium transition-colors ${
-                                        projectsViewMode === 'grid' 
-                                            ? 'bg-indigo-600 text-white' 
+                                        projectsViewMode === 'grid'
+                                            ? 'bg-indigo-600 text-white'
                                             : 'text-slate-300 hover:text-white'
                                     }`}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                                     </svg>
                                 </button>
                                 <button
                                     onClick={() => setProjectsViewMode('list')}
                                     className={`px-3 py-2 text-sm font-medium transition-colors ${
-                                        projectsViewMode === 'list' 
-                                            ? 'bg-indigo-600 text-white' 
+                                        projectsViewMode === 'list'
+                                            ? 'bg-indigo-600 text-white'
                                             : 'text-slate-300 hover:text-white'
                                     }`}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                              d="M4 6h16M4 12h16M4 18h16"/>
                                     </svg>
                                 </button>
                             </div>
@@ -722,16 +736,21 @@ const AdminPage: React.FC = () => {
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
+                        <div
+                            className="mb-6 p-4 text-sm text-red-400 bg-red-900/50 rounded-lg border border-red-800/50">
                             {error}
                         </div>
                     )}
 
                     {isOrderUpdating && (
-                        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
-                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <div
+                            className="mb-4 p-3 bg-blue-900/20 border border-blue-800/30 rounded-lg flex items-center text-sm text-blue-300">
+                            <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             Actualizando orden...
                         </div>
@@ -781,7 +800,8 @@ const AdminPage: React.FC = () => {
                         </div>
                     ) : (
                         <div className="bg-slate-800/20 backdrop-blur-sm rounded-xl border border-slate-700/50 p-4">
-                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar los proyectos. El nuevo orden se guardará automáticamente.</p>
+                            <p className="text-sm text-slate-400 mb-4">Arrastra y suelta para reordenar los proyectos.
+                                El nuevo orden se guardará automáticamente.</p>
                             <SortableList
                                 items={projects}
                                 itemKey={(project) => project.id || project.title}
