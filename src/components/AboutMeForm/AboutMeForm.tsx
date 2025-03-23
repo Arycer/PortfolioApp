@@ -162,139 +162,133 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
 
     return (
         <>
-            <Panel className="w-full max-w-2xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-                        {data ? 'Editar Perfil' : 'Completar Perfil'}
-                    </h2>
-                </div>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-4">
-                        {/* Sección de imagen de perfil */}
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
-                                Imagen de Perfil
-                            </label>
-                            
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                                <ImageContainer
-                                    className="h-40 w-40 mx-auto sm:mx-0"
-                                    isEmpty={!formData.profileImage}
-                                    emptyMessage="Sin imagen"
-                                >
-                                    {formData.profileImage && (
-                                        <img
-                                            src={formData.profileImage}
-                                            alt="Imagen de perfil"
-                                            className="h-full w-full object-contain p-2"
-                                        />
-                                    )}
-                                </ImageContainer>
-                                <div className="flex flex-row sm:flex-col gap-2 justify-center sm:justify-start">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+                        {/* Columna Izquierda */}
+                        <div className="space-y-6">
+                            <Input
+                                label="Nombre de usuario"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                required
+                            />
+
+                            <Input
+                                label="Saludo"
+                                name="greeting"
+                                value={formData.greeting}
+                                onChange={handleChange}
+                                placeholder="Ej: Hola, soy..."
+                                required
+                            />
+
+                            <Textarea
+                                label="Descripción"
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                rows={10}
+                                required
+                            />
+
+                            <Input
+                                label="Email de contacto"
+                                name="contactEmail"
+                                type="email"
+                                value={formData.contactEmail}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        {/* Columna Derecha */}
+                        <div className="space-y-6">
+                            {/* Sección de imagen de perfil */}
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    Imagen de Perfil
+                                </label>
+                                
+                                <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-4">
+                                    <ImageContainer
+                                        className="h-40 w-40 mx-auto sm:mx-0"
+                                        isEmpty={!formData.profileImage}
+                                        emptyMessage="Sin imagen"
+                                    >
+                                        {formData.profileImage && (
+                                            <img
+                                                src={formData.profileImage}
+                                                alt="Imagen de perfil"
+                                                className="h-full w-full object-contain p-2"
+                                            />
+                                        )}
+                                    </ImageContainer>
+                                    <div className="flex flex-row sm:flex-col gap-2 justify-center sm:justify-start">
+                                        <Button
+                                            type="button"
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => setShowImageSelector(true)}
+                                        >
+                                            {formData.profileImage ? 'Cambiar imagen' : 'Seleccionar imagen'}
+                                        </Button>
+                                        {formData.profileImage && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setFormData({ ...formData, profileImage: '' })}
+                                            >
+                                                Quitar imagen
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sección de redes sociales */}
+                            <div className="pt-2">
+                                <div className="flex justify-between items-center mb-4">
+                                    <label className="block text-sm font-medium text-slate-300">
+                                        Redes Sociales <span className="text-xs text-slate-400">({formData.socialLinks.length})</span>
+                                    </label>
                                     <Button
                                         type="button"
                                         variant="secondary"
                                         size="sm"
-                                        onClick={() => setShowImageSelector(true)}
+                                        onClick={() => setShowSocialLinksModal(true)}
                                     >
-                                        {formData.profileImage ? 'Cambiar imagen' : 'Seleccionar imagen'}
+                                        Gestionar redes sociales
                                     </Button>
-                                    {formData.profileImage && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setFormData({ ...formData, profileImage: '' })}
-                                        >
-                                            Quitar imagen
-                                        </Button>
-                                    )}
                                 </div>
-                            </div>
-                        </div>
-
-                        <Input
-                            label="Nombre de usuario"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            required
-                        />
-
-                        <Input
-                            label="Saludo"
-                            name="greeting"
-                            value={formData.greeting}
-                            onChange={handleChange}
-                            placeholder="Ej: Hola, soy..."
-                            required
-                        />
-
-                        <Textarea
-                            label="Descripción"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows={5}
-                            required
-                        />
-
-                        <Input
-                            label="Email de contacto"
-                            name="contactEmail"
-                            type="email"
-                            value={formData.contactEmail}
-                            onChange={handleChange}
-                            required
-                        />
-
-                        {/* Sección de redes sociales */}
-                        <div className="pt-2">
-                            <div className="flex justify-between items-center mb-4">
-                                <label className="block text-sm font-medium text-slate-300">
-                                    Redes Sociales <span className="text-xs text-slate-400">({formData.socialLinks.length})</span>
-                                </label>
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    size="sm"
-                                    onClick={() => setShowSocialLinksModal(true)}
-                                >
-                                    Gestionar redes
-                                </Button>
-                            </div>
-
-                            {formData.socialLinks.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                                    {sortedSocialLinks.slice(0, 4).map((link, index) => (
-                                        <div key={index} className="flex items-center p-3 bg-slate-800/40 rounded-lg">
-                                            <div className="w-6 h-6 mr-2">
-                                                <img 
-                                                    src={link.icon} 
-                                                    alt={link.name} 
-                                                    className="max-w-full max-h-full"
-                                                />
-                                            </div>
-                                            <span className="text-slate-300">{link.name}</span>
+                                
+                                {formData.socialLinks.length > 0 ? (
+                                    <div className="bg-slate-800/20 rounded-lg border border-slate-700/40 p-4">
+                                        <div className="flex flex-wrap gap-2">
+                                            {sortedSocialLinks.slice(0, 5).map((link, index) => (
+                                                <div key={link.id || index} className="flex items-center px-3 py-1.5 bg-slate-700/50 rounded-full text-sm">
+                                                    <span className="truncate max-w-[120px]">{link.name}</span>
+                                                </div>
+                                            ))}
+                                            {formData.socialLinks.length > 5 && (
+                                                <div className="flex items-center px-3 py-1.5 bg-slate-700/30 rounded-full text-sm text-slate-400">
+                                                    +{formData.socialLinks.length - 5} más
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                    {formData.socialLinks.length > 4 && (
-                                        <div className="flex items-center justify-center p-3 bg-slate-800/40 rounded-lg">
-                                            <span className="text-slate-400">+{formData.socialLinks.length - 4} más</span>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="text-center py-6 bg-slate-800/20 rounded-lg border border-slate-700/50 mb-4">
-                                    <p className="text-slate-400">No has agregado redes sociales</p>
-                                </div>
-                            )}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-6 bg-slate-800/20 rounded-lg border border-slate-700/40">
+                                        <p className="text-slate-400">No hay redes sociales configuradas</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="border-t border-slate-700/50 pt-6 mt-6">
-                        <div className="flex justify-end gap-3">
+                    <div className="border-t border-slate-700/50 pt-8 mt-8">
+                        <div className="flex justify-end space-x-3">
                             <Button 
                                 type="button" 
                                 variant="outline" 
@@ -306,52 +300,47 @@ const AboutMeForm: React.FC<AboutMeFormProps> = ({
                                 type="submit" 
                                 isLoading={isSubmitting}
                             >
-                                {data ? 'Actualizar' : 'Guardar'}
+                                {data ? 'Actualizar' : 'Crear'}
                             </Button>
                         </div>
                     </div>
                 </form>
-            </Panel>
-            
-            {/* Modal para gestionar redes sociales */}
             <Modal 
-                isOpen={showSocialLinksModal} 
+                isOpen={showSocialLinksModal}
                 onClose={() => setShowSocialLinksModal(false)}
                 title="Gestionar Redes Sociales"
+                maxWidth="2xl"
             >
                 <div className="space-y-6">
-                    {/* Formulario para añadir o editar */}
-                    <Panel className="border border-slate-700/30">
-                        <h4 className="text-lg font-medium text-slate-300 mb-4">
-                            {editingSocialLink ? 'Editar Red Social' : 'Añadir Nueva Red Social'}
-                        </h4>
-                        
-                        <div className="space-y-4">
-                            <Input
-                                label="Nombre"
-                                name="name"
-                                value={editingSocialLink ? editingSocialLink.link.name : newSocialLink.name}
-                                onChange={handleSocialLinkChange}
-                                placeholder="Ej: LinkedIn, Twitter, GitHub..."
-                            />
+                    <Panel className="p-4">
+                        <div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <Input
+                                    label="Nombre"
+                                    name="name"
+                                    value={editingSocialLink ? editingSocialLink.link.name : newSocialLink.name}
+                                    onChange={handleSocialLinkChange}
+                                    placeholder="Ej: Twitter, GitHub..."
+                                />
+                                
+                                <Input
+                                    label="URL"
+                                    name="url"
+                                    value={editingSocialLink ? editingSocialLink.link.url : newSocialLink.url}
+                                    onChange={handleSocialLinkChange}
+                                    placeholder="https://..."
+                                />
+                                
+                                <Input
+                                    label="Icono"
+                                    name="icon"
+                                    value={editingSocialLink ? editingSocialLink.link.icon : newSocialLink.icon}
+                                    onChange={handleSocialLinkChange}
+                                    placeholder="fa-twitter, fa-github..."
+                                />
+                            </div>
                             
-                            <Input
-                                label="URL"
-                                name="url"
-                                value={editingSocialLink ? editingSocialLink.link.url : newSocialLink.url}
-                                onChange={handleSocialLinkChange}
-                                placeholder="https://..."
-                            />
-                            
-                            <Input
-                                label="URL del Icono"
-                                name="icon"
-                                value={editingSocialLink ? editingSocialLink.link.icon : newSocialLink.icon}
-                                onChange={handleSocialLinkChange}
-                                placeholder="https://...svg o .png"
-                            />
-                            
-                            <div className="flex justify-end gap-2">
+                            <div className="flex justify-end">
                                 {editingSocialLink ? (
                                     <>
                                         <Button 

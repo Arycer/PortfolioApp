@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {ImageInfo} from '../../types';
 import {getImages} from '../../services/storageService';
-import {Button} from './StyledComponents';
+import {Button, SearchInput} from './StyledComponents';
 import Modal from '../Modal/Modal';
 
 interface ImageSelectorProps {
@@ -13,12 +13,12 @@ interface ImageSelectorProps {
 }
 
 const ImageSelector: React.FC<ImageSelectorProps> = ({
-                                                         isOpen,
-                                                         onClose,
-                                                         onSelectImage,
-                                                         title = "Seleccionar imagen",
-                                                         folder = "images"
-                                                     }) => {
+    isOpen,
+    onClose,
+    onSelectImage,
+    title = "Seleccionar imagen",
+    folder = "images"
+}) => {
     const [images, setImages] = useState<ImageInfo[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -52,39 +52,34 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
         }
     };
 
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
+
     // Filtrar imágenes según término de búsqueda
     const filteredImages = images.filter(image =>
         image.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={title}>
-            <div className="space-y-4">
+        <Modal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            title={title}
+            maxWidth="4xl"
+        >
+            <div className="space-y-6 w-full">
                 <div className="relative">
-                    <input
-                        type="text"
+                    <SearchInput
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Buscar imágenes..."
-                        className="w-full px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-10"
+                        className="w-full"
+                        onClear={handleClearSearch}
                     />
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-slate-400 absolute right-3 top-2.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                    </svg>
                 </div>
 
-                <div className="min-h-[300px] flex items-center justify-center">
+                <div className="min-h-[400px] flex items-center justify-center">
                     {isLoading ? (
                         <div className="flex justify-center items-center py-8">
                             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
@@ -101,12 +96,12 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                             </button>
                         </div>
                     ) : filteredImages.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full max-h-[300px] overflow-y-auto p-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-h-[450px] overflow-y-auto p-4">
                             {filteredImages.map((image) => (
                                 <div
                                     key={image.id}
                                     onClick={() => onSelectImage(image.url)}
-                                    className="relative group cursor-pointer overflow-hidden rounded-lg border border-slate-700/50 bg-slate-800/30 aspect-square flex items-center justify-center p-2 hover:border-indigo-500/50 transition-all duration-200"
+                                    className="relative group cursor-pointer overflow-hidden rounded-lg border border-slate-700/50 bg-slate-800/30 aspect-square flex items-center justify-center p-4 hover:border-indigo-500/50 hover:shadow-md hover:shadow-indigo-500/20 transition-all duration-200"
                                 >
                                     <img
                                         src={image.url}
@@ -114,8 +109,9 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                         className="max-h-full max-w-full object-contain"
                                     />
                                     <div
-                                        className="absolute inset-0 bg-indigo-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                                        <span className="text-white text-sm font-medium">Seleccionar</span>
+                                        className="absolute inset-0 bg-indigo-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center p-2">
+                                        <span className="text-white text-sm font-medium mb-1">Seleccionar</span>
+                                        <span className="text-white/70 text-xs text-center truncate w-full">{image.name}</span>
                                     </div>
                                 </div>
                             ))}

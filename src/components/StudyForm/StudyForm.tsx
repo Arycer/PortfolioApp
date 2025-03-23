@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Study, ImageInfo} from '../../types';
-import Modal from '../Modal/Modal';
-import {getImages} from '../../services/storageService';
+import {Study} from '../../types';
+import {Input, Textarea, Button, ImageContainer } from '../ui/StyledComponents';
+import ImageSelector from '../ui/ImageSelector';
 
 interface StudyFormProps {
     study?: Study;
@@ -11,11 +11,11 @@ interface StudyFormProps {
 }
 
 const StudyForm: React.FC<StudyFormProps> = ({
-                                                 study,
-                                                 onSubmit,
-                                                 onCancel,
-                                                 isSubmitting
-                                             }) => {
+    study,
+    onSubmit,
+    onCancel,
+    isSubmitting
+}) => {
     const [formData, setFormData] = useState<Omit<Study, 'id'>>({
         title: '',
         institution: '',
@@ -25,10 +25,6 @@ const StudyForm: React.FC<StudyFormProps> = ({
         logo: ''
     });
     const [showImageSelector, setShowImageSelector] = useState(false);
-    const [images, setImages] = useState<ImageInfo[]>([]);
-    const [isLoadingImages, setIsLoadingImages] = useState(false);
-    const [imageError, setImageError] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         if (study) {
@@ -37,33 +33,8 @@ const StudyForm: React.FC<StudyFormProps> = ({
         }
     }, [study]);
 
-    // Cargar imágenes cuando se abre el selector
-    const loadImages = async () => {
-        setIsLoadingImages(true);
-        setImageError(null);
-
-        try {
-            const imagesList = await getImages('images'); // Usar la carpeta general de imágenes
-            // Ordenar por fecha más reciente primero
-            imagesList.sort((a, b) =>
-                b.createdAt.getTime() - a.createdAt.getTime()
-            );
-            setImages(imagesList);
-        } catch (err) {
-            console.error('Error al cargar imágenes:', err);
-            setImageError('No se pudieron cargar las imágenes. Inténtalo de nuevo.');
-        } finally {
-            setIsLoadingImages(false);
-        }
-    };
-
-    const handleOpenImageSelector = () => {
-        setShowImageSelector(true);
-        loadImages();
-    };
-
-    const handleSelectImage = (image: ImageInfo) => {
-        setFormData(prev => ({...prev, logo: image.url}));
+    const handleSelectImage = (url: string) => {
+        setFormData(prev => ({...prev, logo: url}));
         setShowImageSelector(false);
     };
 
@@ -77,284 +48,128 @@ const StudyForm: React.FC<StudyFormProps> = ({
         await onSubmit(formData);
     };
 
-    // Filtrar imágenes por término de búsqueda
-    const filteredImages = images.filter(image =>
-        image.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     return (
         <>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-slate-300">
-                        Título
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        required
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+                        {/* Columna Izquierda */}
+                        <div className="space-y-6">
+                            <Input
+                                label="Título"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleChange}
+                                required
+                            />
 
-                <div>
-                    <label htmlFor="institution" className="block text-sm font-medium text-slate-300">
-                        Institución
-                    </label>
-                    <input
-                        type="text"
-                        id="institution"
-                        name="institution"
-                        value={formData.institution}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        required
-                    />
-                </div>
+                            <Input
+                                label="Institución"
+                                name="institution"
+                                value={formData.institution}
+                                onChange={handleChange}
+                                required
+                            />
 
-                <div>
-                    <label htmlFor="description" className="block text-sm font-medium text-slate-300">
-                        Descripción
-                    </label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        rows={4}
-                        className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                        required
-                    />
-                </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <Input
+                                    label="Fecha de inicio"
+                                    name="startDate"
+                                    value={formData.startDate}
+                                    onChange={handleChange}
+                                    placeholder="ej: 2020"
+                                    required
+                                />
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="startDate" className="block text-sm font-medium text-slate-300">
-                            Fecha de inicio
-                        </label>
-                        <input
-                            type="text"
-                            id="startDate"
-                            name="startDate"
-                            value={formData.startDate}
-                            onChange={handleChange}
-                            placeholder="ej: 2020"
-                            className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="endDate" className="block text-sm font-medium text-slate-300">
-                            Fecha de fin
-                        </label>
-                        <input
-                            type="text"
-                            id="endDate"
-                            name="endDate"
-                            value={formData.endDate}
-                            onChange={handleChange}
-                            placeholder="ej: 2024 (o vacío si actual)"
-                            className="mt-1 block w-full px-4 py-3 rounded-lg bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        />
-                    </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                        Logo
-                    </label>
-                    <div className="flex items-center space-x-4">
-                        {formData.logo && (
-                            <div
-                                className="w-16 h-16 bg-slate-800/50 rounded-lg overflow-hidden flex items-center justify-center">
-                                <img
-                                    src={formData.logo}
-                                    alt="Logo preview"
-                                    className="max-w-full max-h-full object-contain"
+                                <Input
+                                    label="Fecha de fin"
+                                    name="endDate"
+                                    value={formData.endDate || ''}
+                                    onChange={handleChange}
+                                    placeholder="ej: 2024 (o vacío si actual)"
                                 />
                             </div>
-                        )}
-                        <div className="flex-1">
-                            <div className="flex space-x-2">
-                                <button
-                                    type="button"
-                                    onClick={handleOpenImageSelector}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150"
-                                >
-                                    {formData.logo ? 'Cambiar logo' : 'Seleccionar logo'}
-                                </button>
-                                {formData.logo && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData(prev => ({...prev, logo: ''}))}
-                                        className="px-4 py-2 text-sm font-medium text-red-400 bg-red-900/30 hover:bg-red-900/50 rounded-lg transition-colors duration-150"
+                        </div>
+
+                        {/* Columna Derecha */}
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    Logo
+                                </label>
+                                <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-4">
+                                    <ImageContainer
+                                        className="h-32 w-32 mx-auto sm:mx-0"
+                                        isEmpty={!formData.logo}
+                                        emptyMessage="Sin logo"
                                     >
-                                        Quitar
-                                    </button>
-                                )}
-                            </div>
-                            {formData.logo && (
-                                <div className="mt-2">
-                                    <input
-                                        type="text"
-                                        value={formData.logo}
-                                        readOnly
-                                        className="w-full px-3 py-2 text-xs bg-slate-800/50 border border-slate-700 rounded text-slate-400 overflow-hidden"
-                                    />
+                                        {formData.logo && (
+                                            <img
+                                                src={formData.logo}
+                                                alt={formData.institution}
+                                                className="h-full w-full object-contain p-2"
+                                            />
+                                        )}
+                                    </ImageContainer>
+                                    <div className="flex flex-row sm:flex-col gap-2 justify-center sm:justify-start">
+                                        <Button
+                                            type="button"
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => setShowImageSelector(true)}
+                                        >
+                                            {formData.logo ? 'Cambiar logo' : 'Seleccionar logo'}
+                                        </Button>
+                                        {formData.logo && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => setFormData({ ...formData, logo: '' })}
+                                            >
+                                                Quitar logo
+                                            </Button>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
+                            </div>
+
+                            <Textarea
+                                label="Descripción"
+                                name="description"
+                                value={formData.description}
+                                onChange={handleChange}
+                                rows={10}
+                                required
+                            />
                         </div>
                     </div>
-                </div>
 
-                <div className="flex justify-end space-x-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
-                        disabled={isSubmitting}
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isSubmitting ? 'Guardando...' : study ? 'Actualizar' : 'Crear'}
-                    </button>
-                </div>
-            </form>
-
-            {/* Modal para seleccionar imagen */}
-            <Modal
+                    <div className="border-t border-slate-700/50 pt-8 mt-8">
+                        <div className="flex justify-end space-x-3">
+                            <Button 
+                                type="button" 
+                                variant="outline" 
+                                onClick={onCancel}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button 
+                                type="submit" 
+                                isLoading={isSubmitting}
+                            >
+                                {study ? 'Actualizar' : 'Crear'}
+                            </Button>
+                        </div>
+                    </div>
+                </form>
+            
+            <ImageSelector 
                 isOpen={showImageSelector}
                 onClose={() => setShowImageSelector(false)}
-                title="Seleccionar logo"
-            >
-                <div className="space-y-6">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Buscar imágenes..."
-                            className="w-full px-4 py-2 rounded-lg bg-slate-800/50 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent pr-10"
-                        />
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-slate-400 absolute right-3 top-2.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
-                    </div>
-
-                    {imageError && (
-                        <div
-                            className="bg-red-600/20 border border-red-600/40 text-red-400 px-4 py-3 rounded-lg flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 mr-2"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                            </svg>
-                            {imageError}
-                        </div>
-                    )}
-
-                    {isLoadingImages ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            {[...Array(6)].map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="bg-slate-800/30 border border-slate-700/40 rounded-lg overflow-hidden shadow-md animate-pulse h-40"
-                                >
-                                    <div className="h-32 bg-slate-700/50"></div>
-                                    <div className="p-2">
-                                        <div className="h-3 bg-slate-700/50 rounded w-3/4"></div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : filteredImages.length > 0 ? (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-                            {filteredImages.map(image => (
-                                <div
-                                    key={image.id}
-                                    onClick={() => handleSelectImage(image)}
-                                    className="bg-slate-800/30 border border-slate-700/40 hover:border-indigo-500/50 rounded-lg overflow-hidden shadow-md cursor-pointer transition-all duration-200 hover:shadow-lg transform hover:-translate-y-1"
-                                >
-                                    <div className="h-32 bg-slate-900/50 flex items-center justify-center">
-                                        <img
-                                            src={image.url}
-                                            alt={image.name}
-                                            className="max-h-full max-w-full object-contain"
-                                        />
-                                    </div>
-                                    <div className="p-2">
-                                        <div className="text-xs text-slate-300 truncate" title={image.name}>
-                                            {image.name}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-8 bg-slate-800/20 border border-slate-700/40 rounded-lg">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-12 w-12 text-slate-600 mx-auto mb-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
-                            <h3 className="text-lg font-medium text-slate-300">No hay imágenes</h3>
-                            <p className="text-slate-400 mt-2">
-                                {searchTerm
-                                    ? `No se encontraron imágenes que coincidan con "${searchTerm}"`
-                                    : `No hay imágenes disponibles en la galería`}
-                            </p>
-                        </div>
-                    )}
-
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={() => setShowImageSelector(false)}
-                            className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors duration-150"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            </Modal>
+                onSelectImage={handleSelectImage}
+                title="Seleccionar logo de institución"
+                folder="images"
+            />
         </>
     );
 };

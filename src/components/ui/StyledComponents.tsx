@@ -469,4 +469,55 @@ export const SocialLink = ({href, icon, name, className, ...props}: SocialLinkPr
       </span>
         </a>
     );
+};
+
+// TechBadge component for technologies with remove button
+interface TechBadgeProps {
+    text: string;
+    onRemove?: () => void;
+    variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+    className?: string;
+}
+
+export const TechBadge = ({text, onRemove, variant = 'primary', className}: TechBadgeProps) => {
+    const variantStyles = {
+        default: "bg-slate-700/50 text-slate-200 border-slate-600/50",
+        primary: "bg-indigo-600/80 text-indigo-100 border-indigo-700/50",
+        secondary: "bg-purple-600/80 text-purple-100 border-purple-700/50",
+        success: "bg-green-600/80 text-green-100 border-green-700/50",
+        warning: "bg-yellow-600/80 text-yellow-100 border-yellow-700/50",
+        danger: "bg-red-600/80 text-red-100 border-red-700/50"
+    };
+
+    const hoverStyles = {
+        default: "hover:text-white",
+        primary: "hover:text-indigo-50",
+        secondary: "hover:text-purple-50",
+        success: "hover:text-green-50",
+        warning: "hover:text-yellow-50",
+        danger: "hover:text-red-50"
+    };
+
+    return (
+        <div className={twMerge(
+            "flex items-center gap-2 px-3 py-1 rounded-full border", 
+            variantStyles[variant],
+            className
+        )}>
+            <span className="text-sm">{text}</span>
+            {onRemove && (
+                <button
+                    type="button"
+                    onClick={onRemove}
+                    className={twMerge(
+                        "text-opacity-70 transition-colors",
+                        hoverStyles[variant]
+                    )}
+                    aria-label="Eliminar"
+                >
+                    &times;
+                </button>
+            )}
+        </div>
+    );
 }; 

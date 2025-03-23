@@ -833,6 +833,7 @@ const AdminPage: React.FC = () => {
                     setEditingProject(null);
                 }}
                 title={editingProject ? 'Editar Proyecto' : 'Nuevo Proyecto'}
+                maxWidth="6xl"
             >
                 <ProjectForm
                     project={editingProject || undefined}
@@ -853,6 +854,7 @@ const AdminPage: React.FC = () => {
                     setEditingSkill(null);
                 }}
                 title={editingSkill ? 'Editar Habilidad' : 'Nueva Habilidad'}
+                maxWidth="3xl"
             >
                 <SkillForm
                     skill={editingSkill || undefined}
@@ -873,6 +875,7 @@ const AdminPage: React.FC = () => {
                     setEditingStudy(null);
                 }}
                 title={editingStudy ? 'Editar Estudio' : 'Nuevo Estudio'}
+                maxWidth="5xl"
             >
                 <StudyForm
                     study={editingStudy || undefined}
@@ -893,6 +896,7 @@ const AdminPage: React.FC = () => {
                     setEditingJob(null);
                 }}
                 title={editingJob ? 'Editar Trabajo' : 'Nuevo Trabajo'}
+                maxWidth="5xl"
             >
                 <JobForm
                     job={editingJob || undefined}
@@ -910,6 +914,7 @@ const AdminPage: React.FC = () => {
                 isOpen={showAboutMeForm}
                 onClose={() => setShowAboutMeForm(false)}
                 title="Editar Información Personal"
+                maxWidth="6xl"
             >
                 <AboutMeForm
                     data={aboutMe || undefined}
