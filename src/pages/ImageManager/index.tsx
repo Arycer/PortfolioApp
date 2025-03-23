@@ -2,7 +2,6 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {getImages, deleteImage, uploadImageFromURL} from '../../services/storageService';
 import {ImageInfo} from '../../types';
 import ImageUploader from '../../components/ImageUploader/ImageUploader';
-import ImagePreview from '../../components/ImagePreview/ImagePreview';
 
 const ImageManager: React.FC = () => {
     const [images, setImages] = useState<ImageInfo[]>([]);
@@ -394,7 +393,7 @@ const ImageManager: React.FC = () => {
                     className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                     {filteredImages.map((image) => (
                         <div key={image.id}
-                             className="bg-slate-800/20 border border-slate-700/40 rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl">
+                             className="bg-slate-800/20 border border-slate-700/40 rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl flex flex-col">
                             <div className="aspect-video bg-slate-900/50 flex items-center justify-center overflow-hidden">
                                 <img
                                     src={image.url}
@@ -402,26 +401,24 @@ const ImageManager: React.FC = () => {
                                     className="max-h-full max-w-full object-contain"
                                 />
                             </div>
-                            <div className="p-4">
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-white font-medium truncate" title={image.name}>
-                                            {image.name}
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
-                                                {formatFileSize(image.size || 0)}
-                                            </span>
-                                            <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
-                                                {image.type?.split('/')[1] || 'imagen'}
-                                            </span>
-                                        </div>
+                            <div className="p-4 flex flex-col flex-grow">
+                                <div className="flex-grow">
+                                    <h3 className="text-white font-medium truncate mb-2" title={image.name}>
+                                        {image.name}
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
+                                            {formatFileSize(image.size || 0)}
+                                        </span>
+                                        <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
+                                            {image.type?.split('/')[1] || 'imagen'}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="mt-2 flex justify-end space-x-2">
+                                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-700/40">
                                     <button
                                         onClick={() => handleCopyUrl(image.url)}
-                                        className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center"
+                                        className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center px-2 py-1 rounded hover:bg-slate-700/30 transition-colors"
                                         title="Copiar URL"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -431,8 +428,12 @@ const ImageManager: React.FC = () => {
                                     </button>
                                     <button
                                         onClick={() => handleDeleteImage(image)}
-                                        className="text-sm text-red-400 hover:text-red-300"
+                                        className="text-sm text-red-400 hover:text-red-300 flex items-center px-2 py-1 rounded hover:bg-slate-700/30 transition-colors"
+                                        title="Eliminar imagen"
                                     >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
                                         Eliminar
                                     </button>
                                 </div>
