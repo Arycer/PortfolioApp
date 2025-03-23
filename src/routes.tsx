@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/Login';
-import AdminPage from './pages/Admin';
-import ImageManager from './pages/ImageManager';
-import StyleGuide from './pages/StyleGuide';
-import PortfolioPage from './pages/Portfolio';
+import LoadingSpinner from './components/ui/LoadingSpinner';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+
+// Lazy loading de las páginas
+const LoginPage = lazy(() => import('./pages/Login'));
+const AdminPage = lazy(() => import('./pages/Admin'));
+const ImageManager = lazy(() => import('./pages/ImageManager'));
+const StyleGuide = lazy(() => import('./pages/StyleGuide'));
+const PortfolioPage = lazy(() => import('./pages/Portfolio'));
+
+// Componente de carga con fallback personalizado
+const LazyRoute: React.FC<{ element: React.ReactNode }> = ({ element }) => (
+    <Suspense fallback={<LoadingSpinner />}>
+        {element}
+    </Suspense>
+);
 
 const AppRoutes: React.FC = () => {
     return (
         <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route 
+                path="/login" 
+                element={<LazyRoute element={<LoginPage />} />} 
+            />
             <Route
                 path="/admin"
                 element={
                     <ProtectedRoute>
-                        <AdminPage />
+                        <LazyRoute element={<AdminPage />} />
                     </ProtectedRoute>
                 }
             />
@@ -23,7 +36,7 @@ const AppRoutes: React.FC = () => {
                 path="/admin/images"
                 element={
                     <ProtectedRoute>
-                        <ImageManager />
+                        <LazyRoute element={<ImageManager />} />
                     </ProtectedRoute>
                 }
             />
@@ -31,11 +44,14 @@ const AppRoutes: React.FC = () => {
                 path="/styleguide"
                 element={
                     <ProtectedRoute>
-                        <StyleGuide />
+                        <LazyRoute element={<StyleGuide />} />
                     </ProtectedRoute>
                 }
             />
-            <Route path="/" element={<PortfolioPage />} />
+            <Route 
+                path="/" 
+                element={<LazyRoute element={<PortfolioPage />} />} 
+            />
         </Routes>
     );
 };
