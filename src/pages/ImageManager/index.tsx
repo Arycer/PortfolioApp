@@ -16,6 +16,7 @@ const ImageManager: React.FC = () => {
     // Estado para la subida de imágenes por URL
     const [imageUrl, setImageUrl] = useState('');
     const [isUploadingUrl, setIsUploadingUrl] = useState(false);
+    const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
     const folders = [
         {id: 'images', name: 'General'},
@@ -100,6 +101,30 @@ const ImageManager: React.FC = () => {
     const filteredImages = images.filter(image =>
         image.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Función para formatear el tamaño de la imagen
+    const formatFileSize = (bytes: number): string => {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const handleCopyUrl = async (url: string) => {
+        try {
+            await navigator.clipboard.writeText(url);
+            setCopySuccess(url);
+            setTimeout(() => {
+                setCopySuccess(null);
+            }, 2000);
+        } catch (err) {
+            console.error('Error al copiar la URL:', err);
+            setError('No se pudo copiar la URL al portapapeles');
+        }
+    };
 
     return (
         <div className="py-8 px-4 md:px-8 w-full mx-auto">
@@ -193,6 +218,15 @@ const ImageManager: React.FC = () => {
                         />
                     </svg>
                     Imagen eliminada correctamente
+                </div>
+            )}
+
+            {copySuccess && (
+                <div className="bg-green-600/20 border border-green-600/40 text-green-400 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    URL copiada al portapapeles
                 </div>
             )}
 
@@ -358,13 +392,52 @@ const ImageManager: React.FC = () => {
             ) : filteredImages.length > 0 ? (
                 <div
                     className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
-                    {filteredImages.map(image => (
-                        <ImagePreview
-                            key={image.id}
-                            image={image}
-                            onDelete={handleDeleteImage}
-                            isSelectable={false}
-                        />
+                    {filteredImages.map((image) => (
+                        <div key={image.id}
+                             className="bg-slate-800/20 border border-slate-700/40 rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-xl">
+                            <div className="aspect-video bg-slate-900/50 flex items-center justify-center overflow-hidden">
+                                <img
+                                    src={image.url}
+                                    alt={image.name}
+                                    className="max-h-full max-w-full object-contain"
+                                />
+                            </div>
+                            <div className="p-4">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-white font-medium truncate" title={image.name}>
+                                            {image.name}
+                                        </h3>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
+                                                {formatFileSize(image.size || 0)}
+                                            </span>
+                                            <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
+                                                {image.type?.split('/')[1] || 'imagen'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-2 flex justify-end space-x-2">
+                                    <button
+                                        onClick={() => handleCopyUrl(image.url)}
+                                        className="text-sm text-indigo-400 hover:text-indigo-300 flex items-center"
+                                        title="Copiar URL"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                        </svg>
+                                        Copiar URL
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteImage(image)}
+                                        className="text-sm text-red-400 hover:text-red-300"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
             ) : (

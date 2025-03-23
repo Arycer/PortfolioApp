@@ -1,5 +1,5 @@
 import {storage} from '../config/firebase';
-import {ref, uploadBytes, getDownloadURL, listAll, deleteObject} from 'firebase/storage';
+import {ref, uploadBytes, getDownloadURL, listAll, deleteObject, getMetadata} from 'firebase/storage';
 import {v4 as uuidv4} from 'uuid';
 import {ImageInfo} from '../types';
 
@@ -108,13 +108,20 @@ export const getImages = async (folder: string = 'images'): Promise<ImageInfo[]>
             const url = await getDownloadURL(itemRef);
             const name = itemRef.name;
             const path = itemRef.fullPath;
+            
+            // Obtener metadatos para tamaño y tipo
+            const metadata = await getMetadata(itemRef);
+            const size = metadata.size || 0;
+            const type = metadata.contentType || '';
 
             return {
                 id: name,
                 name: name,
                 url: url,
                 path: path,
-                createdAt: new Date()
+                type,
+                size,
+                createdAt: new Date(metadata.timeCreated || Date.now())
             };
         });
 
