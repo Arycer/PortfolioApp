@@ -79,7 +79,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                     />
                 </div>
 
-                <div className="min-h-[400px] flex items-center justify-center">
+                <div className="min-h-[450px] flex items-start justify-center">
                     {isLoading ? (
                         <div className="flex justify-center items-center py-8">
                             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
@@ -96,12 +96,12 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                             </button>
                         </div>
                     ) : filteredImages.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-h-[450px] overflow-y-auto p-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-x-4 gap-y-35 w-full max-h-[500px] overflow-y-auto p-4">
                             {filteredImages.map((image) => (
                                 <div
                                     key={image.id}
                                     onClick={() => onSelectImage(image.url)}
-                                    className="relative group cursor-pointer overflow-hidden rounded-lg border border-slate-700/50 bg-slate-800/30 aspect-square flex items-center justify-center p-4 hover:border-indigo-500/50 hover:shadow-md hover:shadow-indigo-500/20 transition-all duration-200"
+                                    className="relative group cursor-pointer overflow-hidden rounded-lg border border-slate-700/50 bg-slate-800/30 aspect-square flex items-center justify-center p-3 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-200"
                                 >
                                     <img
                                         src={image.url}
@@ -110,7 +110,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({
                                     />
                                     <div
                                         className="absolute inset-0 bg-indigo-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center p-2">
-                                        <span className="text-white text-sm font-medium mb-1">Seleccionar</span>
+                                        <span className="text-white text-sm font-medium mb-2">Seleccionar</span>
                                         <span className="text-white/70 text-xs text-center truncate w-full">{image.name}</span>
                                     </div>
                                 </div>

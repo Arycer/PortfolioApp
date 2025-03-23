@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Study} from '../../types';
-import {Input, Textarea, Button, ImageContainer } from '../ui/StyledComponents';
+import {
+    Input, 
+    Textarea, 
+    FormGrid, 
+    FormSection, 
+    FormImageField,
+    FormActions
+} from '../ui/StyledComponents';
 import ImageSelector from '../ui/ImageSelector';
 
 interface StudyFormProps {
@@ -50,118 +57,73 @@ const StudyForm: React.FC<StudyFormProps> = ({
 
     return (
         <>
-                <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
-                        {/* Columna Izquierda */}
-                        <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
+                <FormGrid>
+                    {/* Columna Izquierda */}
+                    <FormSection>
+                        <Input
+                            label="Título"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <Input
+                            label="Institución"
+                            name="institution"
+                            value={formData.institution}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <FormGrid columns={2}>
                             <Input
-                                label="Título"
-                                name="title"
-                                value={formData.title}
+                                label="Fecha de inicio"
+                                name="startDate"
+                                value={formData.startDate}
                                 onChange={handleChange}
+                                placeholder="ej: 2020"
                                 required
                             />
 
                             <Input
-                                label="Institución"
-                                name="institution"
-                                value={formData.institution}
+                                label="Fecha de fin"
+                                name="endDate"
+                                value={formData.endDate || ''}
                                 onChange={handleChange}
-                                required
+                                placeholder="ej: 2024 (o vacío si actual)"
                             />
+                        </FormGrid>
+                    </FormSection>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                <Input
-                                    label="Fecha de inicio"
-                                    name="startDate"
-                                    value={formData.startDate}
-                                    onChange={handleChange}
-                                    placeholder="ej: 2020"
-                                    required
-                                />
+                    {/* Columna Derecha */}
+                    <FormSection>
+                        <FormImageField
+                            label="Logo"
+                            imageUrl={formData.logo}
+                            emptyMessage="Sin logo"
+                            onSelectClick={() => setShowImageSelector(true)}
+                            onRemoveClick={() => setFormData({ ...formData, logo: '' })}
+                        />
 
-                                <Input
-                                    label="Fecha de fin"
-                                    name="endDate"
-                                    value={formData.endDate || ''}
-                                    onChange={handleChange}
-                                    placeholder="ej: 2024 (o vacío si actual)"
-                                />
-                            </div>
-                        </div>
+                        <Textarea
+                            label="Descripción"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows={8}
+                            required
+                        />
+                    </FormSection>
+                </FormGrid>
 
-                        {/* Columna Derecha */}
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
-                                    Logo
-                                </label>
-                                <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-4">
-                                    <ImageContainer
-                                        className="h-32 w-32 mx-auto sm:mx-0"
-                                        isEmpty={!formData.logo}
-                                        emptyMessage="Sin logo"
-                                    >
-                                        {formData.logo && (
-                                            <img
-                                                src={formData.logo}
-                                                alt={formData.institution}
-                                                className="h-full w-full object-contain p-2"
-                                            />
-                                        )}
-                                    </ImageContainer>
-                                    <div className="flex flex-row sm:flex-col gap-2 justify-center sm:justify-start">
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            size="sm"
-                                            onClick={() => setShowImageSelector(true)}
-                                        >
-                                            {formData.logo ? 'Cambiar logo' : 'Seleccionar logo'}
-                                        </Button>
-                                        {formData.logo && (
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setFormData({ ...formData, logo: '' })}
-                                            >
-                                                Quitar logo
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Textarea
-                                label="Descripción"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                rows={10}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="border-t border-slate-700/50 pt-8 mt-8">
-                        <div className="flex justify-end space-x-3">
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                onClick={onCancel}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button 
-                                type="submit" 
-                                isLoading={isSubmitting}
-                            >
-                                {study ? 'Actualizar' : 'Crear'}
-                            </Button>
-                        </div>
-                    </div>
-                </form>
+                <FormActions 
+                    onCancel={onCancel}
+                    isSubmitting={isSubmitting}
+                    submitText={study ? 'Actualizar' : 'Crear'}
+                />
+            </form>
             
             <ImageSelector 
                 isOpen={showImageSelector}

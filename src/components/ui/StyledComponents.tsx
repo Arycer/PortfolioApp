@@ -520,4 +520,237 @@ export const TechBadge = ({text, onRemove, variant = 'primary', className}: Tech
             )}
         </div>
     );
+};
+
+// FormField - Componente para agrupar etiquetas y campos con estilos consistentes
+interface FormFieldProps {
+    label: string;
+    htmlFor?: string;
+    children: React.ReactNode;
+    required?: boolean;
+    error?: string;
+    className?: string;
+}
+
+export const FormField = ({ 
+    label, 
+    htmlFor, 
+    children, 
+    required, 
+    error, 
+    className 
+}: FormFieldProps) => {
+    return (
+        <div className={twMerge("w-full", className)}>
+            <label 
+                htmlFor={htmlFor} 
+                className="block text-sm font-medium text-slate-300 mb-2"
+            >
+                {label}
+                {required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            {children}
+            {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        </div>
+    );
+};
+
+// ColorInput - Componente para campos de color con vista previa
+interface ColorInputProps extends InputHTMLAttributes<HTMLInputElement> {
+    label?: string;
+    error?: string;
+}
+
+export const ColorInput = ({ 
+    label, 
+    id, 
+    value, 
+    name, 
+    onChange, 
+    className, 
+    error, 
+    ...props 
+}: ColorInputProps) => {
+    return (
+        <FormField label={label || ""} htmlFor={id} error={error}>
+            <div className="flex gap-2">
+                <input
+                    type="color"
+                    id={id}
+                    name={name}
+                    value={value as string}
+                    onChange={onChange}
+                    className="h-10 w-20 rounded border border-slate-700 bg-slate-900/50 cursor-pointer"
+                    {...props}
+                />
+                <Input
+                    name={name}
+                    value={value as string}
+                    onChange={onChange}
+                    className="flex-1"
+                    {...props}
+                />
+            </div>
+        </FormField>
+    );
+};
+
+// FormImageField - Componente para campos de selección de imagen con previsualización
+interface FormImageFieldProps {
+    label: string;
+    imageUrl: string;
+    emptyMessage?: string;
+    onSelectClick: () => void;
+    onRemoveClick?: () => void;
+    imageContainerClassName?: string;
+    className?: string;
+}
+
+export const FormImageField = ({ 
+    label, 
+    imageUrl, 
+    emptyMessage = "No hay imagen seleccionada", 
+    onSelectClick, 
+    onRemoveClick, 
+    imageContainerClassName, 
+    className 
+}: FormImageFieldProps) => {
+    return (
+        <div className={twMerge("w-full", className)}>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+                {label}
+            </label>
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                <ImageContainer
+                    className={twMerge("h-32 w-32 mx-auto sm:mx-0", imageContainerClassName)}
+                    isEmpty={!imageUrl}
+                    emptyMessage={emptyMessage}
+                >
+                    {imageUrl && (
+                        <img
+                            src={imageUrl}
+                            alt={label}
+                            className="h-full w-full object-contain p-2"
+                        />
+                    )}
+                </ImageContainer>
+                <div className="flex flex-row sm:flex-col gap-2 justify-center sm:justify-start">
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={onSelectClick}
+                    >
+                        {imageUrl ? 'Cambiar imagen' : 'Seleccionar imagen'}
+                    </Button>
+                    {imageUrl && onRemoveClick && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={onRemoveClick}
+                        >
+                            Quitar imagen
+                        </Button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// FormActions - Componente para estandarizar los botones de acción de los formularios
+interface FormActionsProps {
+    onCancel?: () => void;
+    isSubmitting?: boolean;
+    submitText?: string;
+    cancelText?: string;
+    className?: string;
+}
+
+export const FormActions = ({ 
+    onCancel, 
+    isSubmitting, 
+    submitText = "Guardar", 
+    cancelText = "Cancelar", 
+    className 
+}: FormActionsProps) => {
+    return (
+        <div className={twMerge("border-t border-slate-700/50 pt-8 mt-8", className)}>
+            <div className="flex justify-end space-x-3">
+                {onCancel && (
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={onCancel}
+                    >
+                        {cancelText}
+                    </Button>
+                )}
+                <Button 
+                    type="submit" 
+                    isLoading={isSubmitting}
+                >
+                    {submitText}
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+// FormSection - Componente para agrupar campos relacionados
+interface FormSectionProps {
+    title?: string;
+    description?: string;
+    children: React.ReactNode;
+    className?: string;
+}
+
+export const FormSection = ({ 
+    title, 
+    description, 
+    children, 
+    className 
+}: FormSectionProps) => {
+    return (
+        <div className={twMerge("space-y-6", className)}>
+            {title && (
+                <div className="border-b border-slate-700/30 pb-4 mb-6">
+                    <h3 className="text-lg font-medium text-slate-200">{title}</h3>
+                    {description && (
+                        <p className="mt-1 text-sm text-slate-400">{description}</p>
+                    )}
+                </div>
+            )}
+            <div className="space-y-6">
+                {children}
+            </div>
+        </div>
+    );
+};
+
+// FormGrid - Componente para crear layouts en grid para formularios
+interface FormGridProps {
+    children: React.ReactNode;
+    columns?: 1 | 2 | 3 | 4;
+    className?: string;
+}
+
+export const FormGrid = ({ 
+    children, 
+    columns = 2, 
+    className 
+}: FormGridProps) => {
+    const columnsClass = {
+        1: "grid-cols-1",
+        2: "grid-cols-1 lg:grid-cols-2",
+        3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+        4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+    };
+
+    return (
+        <div className={twMerge(`grid gap-x-6 gap-y-6 ${columnsClass[columns]}`, className)}>
+            {children}
+        </div>
+    );
 }; 

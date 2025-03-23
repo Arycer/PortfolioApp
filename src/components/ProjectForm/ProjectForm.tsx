@@ -1,6 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {Project} from '../../types';
-import {Input, Textarea, Button, ImageContainer, TechBadge} from '../ui/StyledComponents';
+import {
+    Input, 
+    Textarea, 
+    Button, 
+    TechBadge, 
+    FormGrid, 
+    FormSection, 
+    FormField, 
+    FormImageField,
+    FormActions
+} from '../ui/StyledComponents';
 import ImageSelector from '../ui/ImageSelector';
 
 interface ProjectFormProps {
@@ -76,9 +86,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     return (
         <>            
             <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+                <FormGrid>
                     {/* Columna Izquierda */}
-                    <div className="space-y-6">
+                    <FormSection>
                         <Input
                             label="Título"
                             name="title"
@@ -96,10 +106,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                             required
                         />
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
-                                Tecnologías utilizadas
-                            </label>
+                        <FormField label="Tecnologías utilizadas">
                             <div className="flex flex-wrap gap-2 mb-4 min-h-[40px]">
                                 {formData.technologies && formData.technologies.map((tech, index) => (
                                     <TechBadge
@@ -127,9 +134,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                                     Añadir
                                 </Button>
                             </div>
-                        </div>
+                        </FormField>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <FormGrid columns={2}>
                             <Input
                                 label="URL del proyecto (opcional)"
                                 name="link"
@@ -144,7 +151,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                                 onChange={handleChange}
                                 placeholder="Ver proyecto"
                             />
-                        </div>
+                        </FormGrid>
 
                         <Input
                             label="URL del repositorio en GitHub (opcional)"
@@ -153,53 +160,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                             onChange={handleChange}
                             placeholder="https://github.com/usuario/proyecto"
                         />
-                    </div>
+                    </FormSection>
 
                     {/* Columna Derecha */}
-                    <div className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
-                                Imagen del Proyecto
-                            </label>
-                            <div className="flex flex-col space-y-4">
-                                <ImageContainer
-                                    className="h-56 w-full"
-                                    isEmpty={!formData.image}
-                                    emptyMessage="No has seleccionado ninguna imagen"
-                                >
-                                    {formData.image && (
-                                        <>
-                                            <img
-                                                src={formData.image}
-                                                alt="Imagen del proyecto"
-                                                className="h-full w-full object-contain"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setFormData(prev => ({...prev, image: ''}))}
-                                                className="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 p-1.5 rounded-full transition-colors"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                        d="M6 18L18 6M6 6l12 12"/>
-                                                </svg>
-                                            </button>
-                                        </>
-                                    )}
-                                </ImageContainer>
-
-                                <div className="flex justify-center">
-                                    <Button
-                                        type="button"
-                                        onClick={() => setShowImageSelector(true)}
-                                        variant="secondary"
-                                    >
-                                        Seleccionar Imagen
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
+                    <FormSection>
+                        <FormImageField
+                            label="Imagen del Proyecto"
+                            imageUrl={formData.image}
+                            emptyMessage="No has seleccionado ninguna imagen"
+                            onSelectClick={() => setShowImageSelector(true)}
+                            onRemoveClick={() => setFormData(prev => ({...prev, image: ''}))}
+                            imageContainerClassName="h-56 w-full"
+                        />
 
                         <Textarea
                             label="Descripción detallada"
@@ -208,26 +180,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                             onChange={handleChange}
                             rows={10}
                         />
-                    </div>
-                </div>
+                    </FormSection>
+                </FormGrid>
 
-                <div className="border-t border-slate-700/50 pt-8 mt-8">
-                    <div className="flex justify-end space-x-3">
-                        <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={onCancel}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button 
-                            type="submit" 
-                            isLoading={isSubmitting}
-                        >
-                            {project ? 'Actualizar' : 'Crear'}
-                        </Button>
-                    </div>
-                </div>
+                <FormActions 
+                    onCancel={onCancel}
+                    isSubmitting={isSubmitting}
+                    submitText={project ? 'Actualizar' : 'Crear'}
+                />
             </form>
             
             <ImageSelector 

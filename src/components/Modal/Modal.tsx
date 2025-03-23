@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useCallback} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 interface ModalProps {
     isOpen: boolean;
@@ -18,109 +18,70 @@ const Modal: React.FC<ModalProps> = ({
     const modalRef = useRef<HTMLDivElement>(null);
     const modalContentRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-
-    // Almacenar la posición original del scroll
-    const scrollPositionRef = useRef<number>(0);
     
-    // Función para bloquear completamente el scroll del body
-    const blockBodyScroll = useCallback(() => {
-        // Guardar la posición actual de scroll
-        scrollPositionRef.current = window.scrollY || document.documentElement.scrollTop;
-        
-        // Aplicar estilos para fijar el body
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${scrollPositionRef.current}px`;
-        document.body.style.width = '100%';
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-        document.body.style.overflow = 'hidden';
-    }, []);
-    
-    // Función para restaurar el scroll del body
-    const unblockBodyScroll = useCallback(() => {
-        // Restaurar los estilos originales
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.paddingRight = '';
-        document.body.style.overflow = '';
-        
-        // Restaurar la posición del scroll
-        window.scrollTo(0, scrollPositionRef.current);
-    }, []);
-
-    // Función para centrar el modal cuando se abre y resetear el scroll
-    const centerModal = useCallback(() => {
-        if (modalContentRef.current) {
-            modalContentRef.current.scrollTop = 0;
-            
-            // Si el contenido es más alto que el modal, aseguramos que se pueda hacer scroll
-            const modalHeight = modalContentRef.current.clientHeight;
-            const contentHeight = modalContentRef.current.scrollHeight;
-            
-            if (contentHeight > modalHeight) {
-                modalContentRef.current.classList.add('overflow-y-auto');
-            } else {
-                modalContentRef.current.classList.remove('overflow-y-auto');
-            }
-        }
-    }, []);
-
-    // Manejador de eventos de scroll
-    const handleScroll = useCallback((e: Event) => {
-        // Permitir scroll solo dentro del contenido del modal
-        if (modalContentRef.current && !modalContentRef.current.contains(e.target as Node)) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-        return true;
-    }, []);
-
     // Bloquear el scroll cuando se abre el modal
     useEffect(() => {
-        if (isOpen) {
-            blockBodyScroll();
-            centerModal();
-            
-            // Capturar todos los eventos de scroll posibles
-            document.addEventListener('wheel', handleScroll, { passive: false, capture: true });
-            document.addEventListener('touchmove', handleScroll, { passive: false, capture: true });
-            document.addEventListener('scroll', handleScroll, { passive: false, capture: true });
-            document.addEventListener('keydown', (e) => {
-                if (['ArrowDown', 'ArrowUp', 'Space', 'PageDown', 'PageUp', 'Home', 'End'].includes(e.code) && 
-                    !modalContentRef.current?.contains(document.activeElement)) {
-                    e.preventDefault();
-                }
-            }, { passive: false, capture: true });
+        if (!isOpen) return;
+        
+        // Guardar la posición actual de scroll
+        const scrollY = window.scrollY;
+        
+        // Crear una capa de bloqueo para el scroll sin mover la página
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        
+        // Centramos el contenido del modal
+        if (modalContentRef.current) {
+            modalContentRef.current.scrollTop = 0;
         }
         
-        return () => {
-            if (isOpen) {
-                unblockBodyScroll();
-                
-                // Eliminar todos los event listeners
-                document.removeEventListener('wheel', handleScroll, { capture: true });
-                document.removeEventListener('touchmove', handleScroll, { capture: true });
-                document.removeEventListener('scroll', handleScroll, { capture: true });
+        // Capturar eventos que podrían causar scroll
+        const handleWheel = (e: WheelEvent) => {
+            if (modalContentRef.current && !modalContentRef.current.contains(e.target as Node)) {
+                e.preventDefault();
             }
         };
-    }, [isOpen, blockBodyScroll, unblockBodyScroll, centerModal, handleScroll]);
-
-    // Cerrar el modal con la tecla Escape
-    useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
+        
+        const handleTouch = (e: TouchEvent) => {
+            if (modalContentRef.current && !modalContentRef.current.contains(e.target as Node)) {
+                e.preventDefault();
+            }
+        };
+        
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (['ArrowDown', 'ArrowUp', 'Space', 'PageDown', 'PageUp', 'Home', 'End'].includes(e.code) && 
+                !modalContentRef.current?.contains(document.activeElement)) {
+                e.preventDefault();
+            }
             if (e.key === 'Escape') {
                 onClose();
             }
         };
-
-        if (isOpen) {
-            document.addEventListener('keydown', handleEscape);
-        }
-
+        
+        document.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+        document.addEventListener('touchmove', handleTouch, { passive: false, capture: true });
+        document.addEventListener('keydown', handleKeyDown, { passive: false, capture: true });
+        
+        // Función de limpieza
         return () => {
-            document.removeEventListener('keydown', handleEscape);
+            // Restaurar el scroll original
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Restaurar la posición de scroll exacta después de una pequeña espera para evitar el "flash"
+            if (scrollY > 0) {
+                // Ejecutamos inmediatamente, pero con setTimeout para garantizar que se ejecute después 
+                // de que React haya completado sus actualizaciones del DOM
+                setTimeout(() => {
+                    window.scrollTo(0, scrollY);
+                }, 0);
+            }
+            
+            // Eliminar todos los event listeners
+            document.removeEventListener('wheel', handleWheel, { capture: true });
+            document.removeEventListener('touchmove', handleTouch, { capture: true });
+            document.removeEventListener('keydown', handleKeyDown, { capture: true });
         };
     }, [isOpen, onClose]);
 
