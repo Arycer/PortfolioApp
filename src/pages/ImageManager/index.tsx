@@ -2,20 +2,17 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {getImages, deleteImage, uploadImageFromURL} from '../../services/storageService';
 import {ImageInfo} from '../../types';
 import ImageUploader from '../../components/ImageUploader/ImageUploader';
+import {useToast} from '../../context/ToastContext';
 
 const ImageManager: React.FC = () => {
     const [images, setImages] = useState<ImageInfo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [activeFolder, setActiveFolder] = useState<string>('images');
-    const [uploadSuccess, setUploadSuccess] = useState(false);
-    const [deleteSuccess, setDeleteSuccess] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Estado para la subida de imágenes por URL
     const [imageUrl, setImageUrl] = useState('');
     const [isUploadingUrl, setIsUploadingUrl] = useState(false);
-    const [copySuccess, setCopySuccess] = useState<string | null>(null);
+
+    const {showToast} = useToast();
 
     const folders = [
         {id: 'images', name: 'General'},
@@ -26,7 +23,6 @@ const ImageManager: React.FC = () => {
 
     const loadImages = useCallback(async () => {
         setIsLoading(true);
-        setError(null);
 
         try {
             const imagesList = await getImages(activeFolder);
@@ -37,23 +33,19 @@ const ImageManager: React.FC = () => {
             setImages(imagesList);
         } catch (err) {
             console.error('Error al cargar imágenes:', err);
-            setError('No se pudieron cargar las imágenes. Inténtalo de nuevo.');
+            showToast('Error al cargar las imágenes', 'error');
         } finally {
             setIsLoading(false);
         }
-    }, [activeFolder]);
+    }, [activeFolder, showToast]);
 
     useEffect(() => {
         loadImages();
     }, [loadImages]);
 
     const handleUploadSuccess = () => {
-        setUploadSuccess(true);
+        showToast('Imagen subida correctamente', 'success');
         loadImages(); // Recargar las imágenes después de una carga exitosa
-
-        setTimeout(() => {
-            setUploadSuccess(false);
-        }, 3000);
     };
 
     // Manejar la subida de imagen desde URL
@@ -61,15 +53,13 @@ const ImageManager: React.FC = () => {
         if (!imageUrl.trim()) return;
 
         setIsUploadingUrl(true);
-        setError(null);
-
         try {
             await uploadImageFromURL(imageUrl, activeFolder);
             setImageUrl('');
             handleUploadSuccess();
         } catch (err) {
             console.error('Error al subir imagen desde URL:', err);
-            setError('No se pudo subir la imagen desde URL. Verifica que la URL sea válida y accesible.');
+            showToast('No se pudo subir la imagen desde URL. Verifica que la URL sea válida y accesible.', 'error');
         } finally {
             setIsUploadingUrl(false);
         }
@@ -80,14 +70,10 @@ const ImageManager: React.FC = () => {
             try {
                 await deleteImage(image.path);
                 setImages(prevImages => prevImages.filter(img => img.id !== image.id));
-                setDeleteSuccess(true);
-
-                setTimeout(() => {
-                    setDeleteSuccess(false);
-                }, 3000);
+                showToast('Imagen eliminada correctamente', 'success');
             } catch (err) {
                 console.error('Error al eliminar la imagen:', err);
-                setError('No se pudo eliminar la imagen. Inténtalo de nuevo.');
+                showToast('Error al eliminar la imagen', 'error');
             }
         }
     };
@@ -102,26 +88,25 @@ const ImageManager: React.FC = () => {
     );
 
     // Función para formatear el tamaño de la imagen
-    const formatFileSize = (bytes: number): string => {
-        if (bytes === 0) return '0 Bytes';
-        
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    const formatFileSize = (bytes?: number): string => {
+        if (!bytes) return 'N/A';
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes;
+        let unitIndex = 0;
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+        return `${size.toFixed(1)} ${units[unitIndex]}`;
     };
 
     const handleCopyUrl = async (url: string) => {
         try {
             await navigator.clipboard.writeText(url);
-            setCopySuccess(url);
-            setTimeout(() => {
-                setCopySuccess(null);
-            }, 2000);
+            showToast('URL copiada al portapapeles', 'success');
         } catch (err) {
             console.error('Error al copiar la URL:', err);
-            setError('No se pudo copiar la URL al portapapeles');
+            showToast('Error al copiar la URL', 'error');
         }
     };
 
@@ -178,78 +163,6 @@ const ImageManager: React.FC = () => {
                 ))}
             </div>
 
-            {uploadSuccess && (
-                <div
-                    className="bg-green-600/20 border border-green-600/40 text-green-400 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                        />
-                    </svg>
-                    Imagen subida correctamente
-                </div>
-            )}
-
-            {deleteSuccess && (
-                <div
-                    className="bg-blue-600/20 border border-blue-600/40 text-blue-400 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                    </svg>
-                    Imagen eliminada correctamente
-                </div>
-            )}
-
-            {copySuccess && (
-                <div className="bg-green-600/20 border border-green-600/40 text-green-400 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    URL copiada al portapapeles
-                </div>
-            )}
-
-            {error && (
-                <div
-                    className="bg-red-600/20 border border-red-600/40 text-red-400 px-4 py-3 rounded-lg mb-6 flex items-center">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                    </svg>
-                    {error}
-                </div>
-            )}
-
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {/* Sección para subir imágenes desde el dispositivo */}
                 <div className="bg-slate-800/20 border border-slate-700/40 rounded-lg p-6 shadow-lg">
@@ -263,7 +176,7 @@ const ImageManager: React.FC = () => {
                     </h2>
                     <ImageUploader
                         onUploadSuccess={handleUploadSuccess}
-                        onUploadError={(err) => setError(err.message)}
+                        onUploadError={(err) => showToast(err.message, 'error')}
                         folder={activeFolder}
                     />
                 </div>
@@ -408,7 +321,7 @@ const ImageManager: React.FC = () => {
                                     </h3>
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
-                                            {formatFileSize(image.size || 0)}
+                                            {formatFileSize(image.size)}
                                         </span>
                                         <span className="text-xs px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md">
                                             {image.type?.split('/')[1] || 'imagen'}
