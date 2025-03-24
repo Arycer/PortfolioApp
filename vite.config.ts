@@ -5,7 +5,21 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          ['babel-plugin-styled-components', {
+            displayName: true,
+            fileName: false,
+            pure: true,
+            transpileTemplateLiterals: true
+          }]
+        ]
+      }
+    }), 
+    tailwindcss()
+  ],
   build: {
     rollupOptions: {
       output: {
@@ -19,6 +33,9 @@ export default defineConfig({
             }
             if (id.includes('firebase')) {
               return 'vendor-firebase';
+            }
+            if (id.includes('styled-components')) {
+              return 'vendor-styled';
             }
             return 'vendor';
           }
@@ -59,6 +76,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', 'styled-components'],
   },
 })
